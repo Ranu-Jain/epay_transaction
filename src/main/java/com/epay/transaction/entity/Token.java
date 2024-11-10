@@ -47,7 +47,7 @@ public class Token {
     private Date tokenExpiryTime;
 
     @Column(name = "is_token_valid", nullable = false)
-    private Boolean isTokenValid;
+    private boolean isTokenValid;
 
     @Column(name = "failed_reason", length = 100)
     private String failedReason;

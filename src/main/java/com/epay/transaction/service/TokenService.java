@@ -38,58 +38,51 @@ public class TokenService {
     private final AuthService authService;
 
     public TransactionResponse<String> generateAccessToken(String merchantApiKey, String merchantSecretKey) {
+        log.info("Access Token Request for merchantApiKey {0} merchantSecretKey {1}", merchantApiKey, merchantSecretKey);
+        //Step 1 : Get Merchant Object
         MerchantDto merchantDto = tokenDao.getActiveMerchantByKeys(merchantApiKey, merchantSecretKey).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
-        TokenDto tokenDto = TokenDto.builder().
-                isTokenValid(Boolean.FALSE).
-                merchantId(merchantDto.getMID()).
-                tokenType(TokenType.CUSTOMER.name()).
-                build();
-        tokenDto = tokenDao.saveToken(tokenDto);
+        //Step 2 : Token Generation
+        return generateToken(merchantDto.getMID(), TokenType.CUSTOMER, buildAuthRequest(merchantDto));
+    }
+    public TransactionResponse<String> generateTransactionToken(String orderHash) {
+        log.info("Transaction Token Request for orderHash {0} ", orderHash);
+        //Step 1 : Get Order Object
+        OrderDto orderDto = tokenDao.getActiveTransactionByHashValue(orderHash);
+        //Step 2 : Token Generation
+        return generateToken(orderDto.getMID(), TokenType.TRANSACTION, buildAuthRequest(orderDto));
+    }
 
-        //TODO : Build AuthRequest
-        AuthRequest authRequest = new AuthRequest();
-        authRequest.setApiKey(merchantApiKey);
-        authRequest.setSecretKey(merchantApiKey);
-        authRequest.setTokenType(TokenType.CUSTOMER);
-        authRequest.setMid(merchantDto.getMID());
-        authRequest.setExpirationTime(merchantDto.getAccessTokenExpiryTime());
-
-        //TODO : call AuthService for token generation
+    private TransactionResponse<String> generateToken(String merchantId, TokenType customer, AuthRequest authRequest) {
+        //Step 1 : Save Initial Token Request in DB
+        TokenDto tokenDto = tokenDao.saveToken(buildTokenDTO(merchantId, customer));
+        //Step 2 : Generate Token by Authentication Service
         String token = authService.generateToken(authRequest);
-        //TODO : Build Token DTO
         tokenDto.setGeneratedToken(token);
         tokenDto.setTokenValid(Boolean.TRUE);
-        tokenDao.updateToken(tokenDto);
+        //Step 3 : Save Token Request in DB with token value
+        tokenDao.saveToken(tokenDto);
         return TransactionResponse.<String>builder().data(List.of(tokenDto.getGeneratedToken())).build();
     }
 
+    private static TokenDto buildTokenDTO(String merchantId, TokenType tokenType) {
+        return TokenDto.builder().isTokenValid(Boolean.FALSE).merchantId(merchantId).tokenType(tokenType.name()).createdAt(System.currentTimeMillis()).updatedAt(System.currentTimeMillis()).build();
+    }
 
-    public TransactionResponse<String> generateTransactionToken(String orderHash) {
-        log.info("service-Transaction token ");
-        //TODO: call OrderDB to get OrderDetails
-        OrderDto orderDto = tokenDao.getActiveTransactionByHashValue(orderHash);
-
-        TokenDto tokenDto = TokenDto.builder().isTokenValid(false).build();
-        tokenDto.setMerchantId(orderDto.getMID());
-        tokenDto.setTokenType(TokenType.TRANSACTION.name());
-        tokenDto = tokenDao.saveToken(tokenDto);
-
-        //TODO : Build AuthRequest
+    private static AuthRequest buildAuthRequest(MerchantDto merchantDto) {
         AuthRequest authRequest = new AuthRequest();
-        authRequest.setHashValue(orderHash);
+        authRequest.setTokenType(TokenType.CUSTOMER);
+        authRequest.setMid(merchantDto.getMID());
+        authRequest.setExpirationTime(merchantDto.getAccessTokenExpiryTime());
+        return authRequest;
+    }
+
+    private static AuthRequest buildAuthRequest(OrderDto orderDto) {
+        AuthRequest authRequest = new AuthRequest();
         authRequest.setTokenType(TokenType.TRANSACTION);
         authRequest.setMid(orderDto.getMID());
         authRequest.setSbiOrderReference(orderDto.getOrderRefNum());
         authRequest.setExpirationTime(orderDto.getExpiry());
-
-        //TODO :call AuthService for token generation
-        String token = authService.generateToken(authRequest);
-
-        //TODO :Build Token DTO
-        tokenDto.setGeneratedToken(token);
-        tokenDto.setTokenValid(Boolean.TRUE);
-        tokenDao.updateToken(tokenDto);
-        return TransactionResponse.<String>builder().data(List.of(tokenDto.getGeneratedToken())).build();
+        return authRequest;
     }
 
 }

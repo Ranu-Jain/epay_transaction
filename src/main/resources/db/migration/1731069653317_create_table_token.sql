@@ -1,10 +1,12 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE token (
-    id CHARACTER(36) NOT NULL,
+    id UUID NOT NULL DEFAULT UUID_GENERATE_V4(),
     merchant_id CHARACTER(255) NOT NULL,
     token_type CHARACTER(50) NOT NULL,
     generated_token CHARACTER(200),
     token_expiry_time TIMESTAMP,
-    is_token_valid CHARACTER(1) NOT NULL,
+    is_token_valid BOOLEAN DEFAULT false,
     failed_reason CHARACTER(100),
     remarks CHARACTER(100),
     expired_at TIMESTAMP,
@@ -16,13 +18,13 @@ CREATE TABLE token (
 );
 
 CREATE TABLE token_audit (
-    id CHARACTER(36) NOT NULL,
+    id UUID NOT NULL DEFAULT UUID_GENERATE_V4(),
     token_id CHARACTER(36) NOT NULL,
     action_type CHARACTER(50) NOT NULL
 );
 
 CREATE TABLE merchant_order_info (
-    id CHARACTER(36) ,
+    id UUID NOT NULL DEFAULT UUID_GENERATE_V4(),
     status CHARACTER(50),
     order_hash CHARACTER(50),
     merchant_token_id CHARACTER(36),

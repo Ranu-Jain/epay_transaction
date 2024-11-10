@@ -57,11 +57,4 @@ public class TokenDao {
         //TODO : Save for Audit Table Also
         return objectMapper.convertValue(token, TokenDto.class);
     }
-
-
-    public void updateToken(TokenDto tokenDto) {
-        Token token = objectMapper.convertValue(tokenDto, Token.class);
-        Token updatetoken = tokenRepository.findById(token.getId()).orElseThrow(()->new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Token")));
-        tokenRepository.save(updatetoken);
-    }
 }
