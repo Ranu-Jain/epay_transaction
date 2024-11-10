@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Shilpa Kothre
+      changes:
+        - sqlFile:
+            path: db/migration/1731069653317_create_table_token.sql
+            relativeToChangelogFile: false
+
+
+
