@@ -41,7 +41,7 @@ public class TokenDao {
     public Optional<MerchantDto> getActiveMerchantByKeys(String merchantApiKey, String merchantSecretKey) {
         Optional<MerchantDto> merchantDto = merchantCacheRepository.getActiveMerchantByKeys(merchantApiKey, merchantSecretKey);
         if(merchantDto.isEmpty()){
-             merchantDto = Optional.ofNullable(merchantServicesClient.getMerchantInfo(merchantApiKey, merchantSecretKey));
+             merchantDto = Optional.ofNullable(merchantServicesClient.getMerchantByKeys(merchantApiKey, merchantSecretKey));
         }
         return merchantDto;
     }
