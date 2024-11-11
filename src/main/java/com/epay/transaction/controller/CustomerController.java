@@ -8,10 +8,7 @@ import com.epay.transaction.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Class Name: CustomerController
@@ -26,16 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/v1/customer")
+@RequestMapping("/customer")
 @RequiredArgsConstructor
 @Validated
 public class CustomerController {
 
     private final CustomerService customerService;
-
     @PostMapping
     public TransactionResponse<CustomerResponse> createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
         return customerService.saveCustomer(customerRequest);
+    }
+
+    @GetMapping("/{customerId}")
+    public TransactionResponse<CustomerResponse> getCustomerByCustomerId(@PathVariable("customerId") String customerId) {
+        return customerService.getCustomerByCustomerId(customerId);
     }
 
 }

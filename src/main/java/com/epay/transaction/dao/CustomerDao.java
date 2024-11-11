@@ -53,6 +53,10 @@ public class CustomerDao {
         return objectMapper.convertValue(customer, CustomerDto.class);
     }
 
+    public Optional<CustomerDto> getCustomerByCustomerId(String customerId) {
+        Optional<Customer> customer = customerRepository.findByCustomerId(customerId);
+        return customer.map(value -> objectMapper.convertValue(value, CustomerDto.class));
+    }
 }
 
 

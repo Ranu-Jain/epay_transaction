@@ -10,6 +10,7 @@ import java.util.UUID;
 public class CustomerDto {
 
     private UUID id;
+    private String merchantId;
     private String name;
     private String email;
     private String phoneNumber;

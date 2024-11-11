@@ -51,10 +51,18 @@ public class CustomerService {
         //Step 3 : Validated customerRequest
         customerValidator.validateCustomerRequest(customerDto);
         //Step 4 : Generate CustomerId
+        customerDto.setMerchantId(merchantDto.getMID());
         customerDto.setCustomerId(uniqueIDGenearator.generateUniqueCustomerId());
         //Step 5 : Save Customer Data
         customerDto = customerDao.saveCustomer(customerDto);
         //Step 6 : Build Customer Response and send to controller
+        CustomerResponse customerResponse = CustomerResponse.builder().customerId(customerDto.getCustomerId()).customerResponse(buildEncryptCustomerResponse(customerDto, merchantDto)).build();
+        return TransactionResponse.<CustomerResponse>builder().data(List.of(customerResponse)).status(1).count(1L).build();
+    }
+
+    public TransactionResponse<CustomerResponse> getCustomerByCustomerId(String customerId) {
+        CustomerDto customerDto = customerDao.getCustomerByCustomerId(customerId).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Customer")));
+        MerchantDto merchantDto = customerDao.getActiveMerchantByMID(customerDto.getMerchantId()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
         CustomerResponse customerResponse = CustomerResponse.builder().customerId(customerDto.getCustomerId()).customerResponse(buildEncryptCustomerResponse(customerDto, merchantDto)).build();
         return TransactionResponse.<CustomerResponse>builder().data(List.of(customerResponse)).status(1).count(1L).build();
     }
