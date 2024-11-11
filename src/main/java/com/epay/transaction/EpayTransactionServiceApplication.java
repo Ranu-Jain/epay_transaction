@@ -1,6 +1,7 @@
 package com.epay.transaction;
 
 import com.epay.transaction.config.audit.SpringSecurityAuditorAware;
+import com.sbi.epay.util.util.EncryptionDecryptionUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -48,6 +49,11 @@ public class EpayTransactionServiceApplication implements WebMvcConfigurer {
 
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 
+    }
+
+    @Bean
+    public EncryptionDecryptionUtil constructEncryptionDecryptionUtil () {
+        return new EncryptionDecryptionUtil();
     }
 
 

@@ -9,7 +9,12 @@ import java.util.Optional;
 public class MerchantCacheRepository {
 
     public Optional<MerchantDto> getActiveMerchantByKeys(String merchantApiKey, String merchantSecretKey) {
-        //TODO : Call Hazlecast utility get method for Merchant by keys
+        //TODO : Call Hazelcast utility get method for Merchant by keys
+        return Optional.empty();
+    }
+
+    public Optional<MerchantDto> getActiveMerchantByMID(String mID) {
+        //TODO : Call Hazelcast utility get method for Merchant by MID
         return Optional.empty();
     }
 }
