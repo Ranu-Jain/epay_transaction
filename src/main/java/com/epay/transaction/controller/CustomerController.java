@@ -3,6 +3,7 @@ package com.epay.transaction.controller;
 
 import com.epay.transaction.model.request.CustomerRequest;
 import com.epay.transaction.model.response.CustomerResponse;
+import com.epay.transaction.model.response.TransactionResponse;
 import com.epay.transaction.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public CustomerResponse createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
+    public TransactionResponse<CustomerResponse> createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
         return customerService.saveCustomer(customerRequest);
     }
 

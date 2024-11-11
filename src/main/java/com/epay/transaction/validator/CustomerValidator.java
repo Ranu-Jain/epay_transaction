@@ -8,5 +8,6 @@ public class CustomerValidator {
 
     public void validateCustomerRequest(CustomerDto customerDto){
 
+
     }
 }

@@ -1,8 +1,8 @@
 package com.epay.transaction.model.response;
 
-import lombok.Data;
-
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 /**
  * Class Name: CustomerController
@@ -16,50 +16,11 @@ import java.util.List;
  * Version:1.0
  */
 
-@Data
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CustomerResponse {
-
-    private List<DataItem> data;
-
-    private int status;
-
-    private int count;
-
-    private int size;
-
-
-    public CustomerResponse(Long id, String customerId) {
-
-        this.data = List.of(new DataItem(id, customerId));
-
-        this.status = 1; // Indicating success
-
-        this.count = 1; // Number of items
-
-        this.size = 1;  // Response size
-
-    }
-
-
-    @Data
-
-    public static class DataItem {
-
-        private Long id;
-
-        private String customerId;
-
-
-        public DataItem(Long id, String customerId) {
-
-            this.id = id;
-
-            this.customerId = customerId;
-
-        }
-
-    }
-
+    private String customerId;
+    private String customerResponse;
 }
 

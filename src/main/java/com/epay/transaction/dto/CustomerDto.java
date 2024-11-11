@@ -14,6 +14,7 @@ public class CustomerDto {
     private String email;
     private String phoneNumber;
     private String gstIn;
+    private String gstInAddress;
     private String address1;
     private String address2;
     private String city;

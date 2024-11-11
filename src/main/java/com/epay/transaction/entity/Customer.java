@@ -1,12 +1,10 @@
 package com.epay.transaction.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Class Name: CustomerController
@@ -22,58 +20,47 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name="merchant_customer")
+@Table(name = "customer")
 public class Customer {
 
-  @Id
-  @GeneratedValue(strategy=GenerationType.AUTO)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    private UUID id;
 
-  @NotBlank(message="Merchant Id is required")
-  @Column(name="merchant_id")
-  private String mid;
+    @Column(name = "merchant_id", nullable = false)
+    private String merchantId;
 
-  @Column(name="customer_id")
-  private String customerId;
+    @Column(name = "customer_id", nullable = false)
+    private String customerId;
 
-  @Column(name="Name")
-  private String name;
+    @Column(name = "Name", nullable = false)
+    private String name;
 
-  @Email(message = "please enter valid email")
-  @Column(name="Email")
-  private String email;
+    private String email;
+    private String phoneNumber;
+    private String gstIn;
+    private String gstInAddress;
+    private String address1;
+    private String address2;
+    private String city;
+    private String state;
+    private String country;
+    private String pinCode;
+    private String status;
 
-  @Pattern(regexp = "^\\+?\\d{10,15}",message = "Invalid phone number,it should be minimum 10 and max 15")
-  @Column(name="phone_number")
-  private String phoneNumber;
+    @Column(name = "created_by")
+    private String createdBy;
 
-  private String gstin;
-  private String gstin_address;
+    @Column(name = "updated_by")
+    private String updatedBy;
 
-  @Column(name="created_by")
-  private String createdBy;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_date")
+    private Date createdDate;
 
-  @Column(name="updated_by")
-  private String updatedBy;
-
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(name="created_date")
-  private Date createdDate;
-
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(name="updated_date")
-  private Date updatedDate;
-
-
-  private String prefpaymode;
-  private String address1;
-  private String address2;
-
-  private String city;
-  private String state;
-  private String country;
-
-  @Pattern(regexp = "^\\+?[0-9]{6}",message = "Invalid pin code")
-  private String pinCode;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_date")
+    private Date updatedDate;
 
 }
