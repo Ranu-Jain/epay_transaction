@@ -42,8 +42,7 @@ dependencies {
 
 	//Utility
 	implementation 'com.sbi.epay.authentication:authentication-service-0.0.1-SNAPSHOT-plain'
-	//implementation 'com.sbi.epay.authentication:authentication-service-0.0.1-SNAPSHOT'
-	//implementation 'com.sbi.epay.logging:logging-service-1.0-SNAPSHOT'
+	implementation 'name:encryption-decryption-service-1.0-SNAPSHOT-plain'
 	implementation 'com.sbi.epay.logging:logging-service-1.0-SNAPSHOT-plain'
 
 	//developmentOnly 'org.springframework.boot:spring-boot-devtools'

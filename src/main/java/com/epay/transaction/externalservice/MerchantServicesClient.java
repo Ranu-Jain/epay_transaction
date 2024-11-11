@@ -16,7 +16,7 @@ public class MerchantServicesClient extends ApiClient {
         super(baseUrl);
     }
 
-    public MerchantDto getMerchantInfo(String apiKey, String secretKey) {
+    public MerchantDto getMerchantByKeys(String apiKey, String secretKey) {
         HttpHeaders headers = prepareHttpHeaders();
         headers.add("Merchant-API-Key", apiKey);
         headers.add("Merchant-Secret-Key", secretKey);
@@ -28,6 +28,19 @@ public class MerchantServicesClient extends ApiClient {
         return MerchantDto.builder()
                 .mID("1122323")
                 .accessTokenExpiryTime(2l)
+                .status("active")
+                .build();
+    }
+
+    public MerchantDto getMerchantByMID(String mId) {
+        HttpHeaders headers = prepareHttpHeaders();
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        URI uri = URI.create(getBaseUrl() + MERCHANT_ENDPOINT + mId);
+        //TODO : Once Merchant Service API ready need to use below method
+        //ResponseEntity<MerchantDto> entity = getRestTemplate().exchange(uri, HttpMethod.POST, request, MerchantDto.class);
+        //return entity.getBody();
+        return MerchantDto.builder()
+                .mID("1122323")
                 .status("active")
                 .build();
     }
