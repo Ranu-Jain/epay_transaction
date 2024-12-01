@@ -1,68 +1,73 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.epay.transaction'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' }
-	maven { url 'https://repo.spring.io/snapshot' }
-	maven {
-		url = uri("repo.maven.apache.org/maven2")
-	}
-	//mavenLocal()
-	flatDir {
-		dirs "libs"
-	}
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+    maven {
+        url = uri("repo.maven.apache.org/maven2")
+    }
+    //mavenLocal()
+    flatDir {
+        dirs "lib"
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation("org.springframework.boot:spring-boot-starter-aop")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
-	implementation 'commons-io:commons-io:2.11.0'
-	implementation 'org.modelmapper:modelmapper:2.4.4'
-	implementation 'com.oracle.database.jdbc:ojdbc11:23.5.0.24.07'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.12.3'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.modelmapper:modelmapper:2.4.4'
+    implementation 'com.oracle.database.jdbc:ojdbc11:23.5.0.24.07'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.12.3'
 
-	//Utility
-	implementation 'com.sbi.epay.authentication:authentication-service-0.0.1-SNAPSHOT-plain'
-	implementation 'name:encryption-decryption-service-1.0-SNAPSHOT-plain'
-	implementation 'com.sbi.epay.logging:logging-service-1.0-SNAPSHOT-plain'
+    implementation group: 'com.hazelcast', name: 'hazelcast', version: '5.5.0'
 
-	//developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.liquibase:liquibase-core'
-	//implementation 'org.springframework.boot:spring-boot-devtools:3.3.4'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'  //'2.2.0'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    //Utility
+    implementation 'name:authentication-service-0.0.1-SNAPSHOT'
+    // implementation 'name:encryption-decryption-service-1.0-SNAPSHOT-plain'
+    implementation 'name:logging-service-1.0-SNAPSHOT'
+    implementation 'name:hazelcast-service-0.0.1-SNAPSHOT-plain'
+    implementation 'name:encryption-decryption-service-0.0.1-SNAPSHOT'
+
+
+    //Gson
+    implementation("com.google.code.gson:gson:2.8.8")
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'  //'2.2.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 //Just for Testing
-	runtimeOnly 'org.postgresql:postgresql'
-	implementation 'org.liquibase:liquibase-core'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

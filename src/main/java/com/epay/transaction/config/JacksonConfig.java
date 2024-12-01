@@ -1,14 +1,3 @@
-/*
- *
- *  Copyright (c) [2024] [State Bank of India]
- *  All rights reserved.
- *
- *  Author:@V0000001(Shilpa Kothre)
- *
- *  Version:1.0
- * /
- */
-
 package com.epay.transaction.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

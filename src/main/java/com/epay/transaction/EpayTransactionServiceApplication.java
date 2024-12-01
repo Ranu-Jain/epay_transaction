@@ -1,7 +1,11 @@
 package com.epay.transaction;
 
 import com.epay.transaction.config.audit.SpringSecurityAuditorAware;
-import com.sbi.epay.util.util.EncryptionDecryptionUtil;
+
+import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.sbi.epay.hazelcast.service.HazelcastService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,36 +30,47 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
 @ComponentScan(basePackages = {
-        "org.springframework.boot.context.embedded.tomcat",
-        "com.epay.transaction"
+		"org.springframework.boot.context.embedded.tomcat",
+		"com.epay.transaction","com.sbi.epay.authentication"
 })
 @EnableJpaRepositories(basePackages = "com.epay.transaction")
 @EntityScan(basePackages = "com.epay.transaction")
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
+@EnableScheduling
 public class EpayTransactionServiceApplication implements WebMvcConfigurer {
 
-    public static void main(String[] args) {
-        SpringApplication.run(EpayTransactionServiceApplication.class, args);
-    }
+	private static final String CLUSTER_NAME = "Epay_Key_Management";
 
-    @Bean
-    public AuditorAware<String> auditorAware() {
-        return new SpringSecurityAuditorAware();
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(EpayTransactionServiceApplication.class, args);
+	}
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	@Bean
+	public AuditorAware<String> auditorAware() {
+		return new SpringSecurityAuditorAware();
+	}
 
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 
-    }
+		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 
-    @Bean
-    public EncryptionDecryptionUtil constructEncryptionDecryptionUtil () {
-        return new EncryptionDecryptionUtil();
-    }
+	}
+
+
+	@Bean
+	public HazelcastInstance buidHazelcastInstance() {
+		Config config = new Config();
+		config.setClusterName(CLUSTER_NAME);
+		return Hazelcast.newHazelcastInstance(config);
+	}
+
+	@Bean
+	public HazelcastService buidHazelcastService() {
+		return new HazelcastService();
+	}
 
 
 }
