@@ -18,5 +18,10 @@ import java.util.UUID;
  * Version:1.0
  */
 public interface PaymentIntiationRepo extends JpaRepository<PaymentTransaction, UUID> {
+public interface PaymentTransactionRepository extends JpaRepository<PaymentTransaction, Long> {
 
+    Optional<PaymentTransaction> findByOrderNumber(String orderNumber);
+
+    Optional<PaymentTransaction> findByAtrn(String atrn);
+}
 }
