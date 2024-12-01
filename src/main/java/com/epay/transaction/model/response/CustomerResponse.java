@@ -1,8 +1,6 @@
 package com.epay.transaction.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Class Name: CustomerController
@@ -18,9 +16,10 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class CustomerResponse {
     private String customerId;
     private String customerResponse;
 }
-

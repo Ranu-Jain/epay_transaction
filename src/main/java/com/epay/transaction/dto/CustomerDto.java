@@ -1,32 +1,38 @@
+
 package com.epay.transaction.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.UUID;
 
-@Data
-@Builder
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class CustomerDto {
 
     private UUID id;
-    private String merchantId;
+    private String mId;
+    private String customerId;
     private String name;
     private String email;
-    private String phoneNumber;
     private String gstIn;
     private String gstInAddress;
+    private String phoneNumber;
     private String address1;
     private String address2;
     private String city;
     private String state;
     private String country;
     private String pinCode;
-    private String customerId;
     private String status;
-    private Long createdAt;
-    private Long updatedAt;
     private String createdBy;
     private String updatedBy;
+    private Long createdDate;
+    private Long updatedDate;
+
+
 
 }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Class Name:CustomerRepository
@@ -15,9 +16,9 @@ import java.util.Optional;
  * Version:1.0
  */
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 
-    Optional<Customer> findByEmailAndPhoneNumber(String email, String phoneNumber);
+    Optional<Customer> findByEmailAndPhoneNumber(String email, String phone);
     Optional<Customer> findByCustomerId(String customerId);
     boolean existsByCustomerId(String customerId);
 

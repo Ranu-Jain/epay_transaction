@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20
+      author: Shilpa Kothre
+      changes:
+        - sqlFile:
+            path: db/scripts/1731069653317_create_table_token.sql
+            relativeToChangelogFile: false
+
+
+

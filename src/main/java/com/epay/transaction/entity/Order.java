@@ -2,92 +2,98 @@ package com.epay.transaction.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.UUID;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "merchant_order_info")
 public class Order {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(nullable = false, updatable = false)
-   private UUID id;
+    @Id
+    private String id;
 
-   @Column(name = "status", length = 50)
-   private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-   @Column(name = "order_hash", length = 50)
-   private String hash;
 
-   @Column(name = "merchant_token_id")
-   private UUID merchantTokenId;
+    @Column(name = "order_hash")
+    private String hash;
 
-   @Column(name = "merchant_id")
-   private UUID mID;
+    @Column(name = "merchant_token_id")
+    private String merchantTokenId;
 
-   @Column(name = "merchant_customer_id")
-   private UUID merchantCustomerId;
+    @Column(name = "merchant_id")
+    private String mid;
 
-   @Column(name = "country_id", length = 50)
-   private String countryId;
+    @Column(name = "merchant_customer_id")
+    private String merchantCustomerId;
 
-   @Column(name = "currency_id", length = 50)
-   private String currencyId;
+    @Column(name = "country_id")
+    private String countryId;
 
-   @Column(name = "amount")
-   private Double amount;
+    @Column(name = "currency_id")
+    private String currencyId;
 
-   @Column(name = "order_ref_num")
-   private String orderRefNum;
+    @Column(name = "amount")
+    private Double amount;
 
-   @Column(name = "operation_mode", length = 50)
-   private String operationMode;
+    @Column(name = "order_ref_num")
+    private String orderRefNum;
 
-   @Column(name = "txn_mode", length = 50)
-   private String txnMode;
+    @Column(name = "operation_mode")
+    private String operationMode;
 
-   @Column(name = "payment_mode", length = 50)
-   private String paymentMode;
+    @Column(name = "txn_mode")
+    private String txnMode;
 
-   @Column(name = "access_mode", length = 50)
-   private String accessMode;
+    @Column(name = "payment_mode")
+    private String paymentMode;
 
-   @Column(name = "order_status", length = 50)
-   private String orderStatus;
+    @Column(name = "access_mode")
+    private String accessMode;
 
-   @Column(name = "order_request_count")
-   private Integer orderRequestCount;
+    @Column(name = "order_status")
+    private String orderStatus;
 
-   @Column(name = "callback_url")
-   private String callbackUrl;
+    @Column(name = "order_request_count")
+    private Integer orderRequestCount;
 
-   @Column(name = "failed_reason")
-   private String failedReason;
+    @Column(name = "callback_url")
+    private String callbackUrl;
 
-   @Column(name = "system_ip")
-   private String systemIp;
+    @Column(name = "failed_reason")
+    private String failedReason;
 
-   @Column(name = "geo_location")
-   private String geoLocation;
+    @Column(name = "system_ip")
+    private String systemIp;
 
-   @Column(name = "system_details", length = 50)
-   private String systemDetails;
+    @Column(name = "geo_location")
+    private String geoLocation;
 
-   @Column(name = "order_generation_mode", length = 50)
-   private String orderGenerationMode;
+    @Column(name = "system_details")
+    private String systemDetails;
 
-   @Column(name = "other_details", columnDefinition = "CLOB")
-   private String otherDetails;
+    @Column(name = "order_generation_mode")
+    private String orderGenerationMode;
 
-   @Column(name = "expiry")
-   private Integer expiry;
+    @Column(name = "other_details", columnDefinition = "CLOB")
+    private String otherDetails;
 
-   @Column(name = "tpv", columnDefinition = "CLOB")
-   private String tpv;
+    @Column(name = "expiry")
+    private Integer expiry;
+
+    @Column(name = "tpv", columnDefinition = "CLOB")
+    private String tpv;
+
+    @Column(name = "token")
+    private String token;
 
 }

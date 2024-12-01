@@ -34,7 +34,7 @@ public class Customer {
     @Column(name = "customer_id", nullable = false)
     private String customerId;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "customer_name", nullable = false)
     private String name;
 
     private String email;
@@ -46,7 +46,10 @@ public class Customer {
     private String city;
     private String state;
     private String country;
+
+    @Column(name = "pincode", nullable = false)
     private String pinCode;
+
     private String status;
 
     @Column(name = "created_by")
@@ -55,12 +58,13 @@ public class Customer {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    //@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
-    private Date createdDate;
+    private Long createdDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    ///@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date")
-    private Date updatedDate;
+    private Long updatedDate;
+
 
 }

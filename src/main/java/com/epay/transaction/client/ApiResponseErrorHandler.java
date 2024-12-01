@@ -19,7 +19,7 @@ public class ApiResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-      String errorMessage;
+        String errorMessage;
 
         try {
             errorMessage = IOUtils.toString(response.getBody(), UTF_8);
@@ -30,5 +30,5 @@ public class ApiResponseErrorHandler implements ResponseErrorHandler {
 
         log.error(errorMessage);
         throw new ApiException(response.getStatusCode().value(), errorMessage);
-   }
+    }
 }

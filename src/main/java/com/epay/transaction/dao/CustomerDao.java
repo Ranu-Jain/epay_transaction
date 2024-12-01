@@ -5,7 +5,7 @@ import com.epay.transaction.dto.MerchantDto;
 import com.epay.transaction.entity.Customer;
 import com.epay.transaction.externalservice.MerchantServicesClient;
 import com.epay.transaction.repositary.CustomerRepository;
-import com.epay.transaction.repositary.cache.MerchantCacheRepository;
+import com.epay.transaction.repositary.cache.MerchantCacheRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class CustomerDao {
 
     private final CustomerRepository customerRepository;
-    private final MerchantCacheRepository merchantCacheRepository;
+    private final MerchantCacheRepo merchantCacheRepository;
     private final ObjectMapper objectMapper;
     private final MerchantServicesClient merchantServicesClient;
 
@@ -58,9 +58,3 @@ public class CustomerDao {
         return customer.map(value -> objectMapper.convertValue(value, CustomerDto.class));
     }
 }
-
-
-
-
-
-

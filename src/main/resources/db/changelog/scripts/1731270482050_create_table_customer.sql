@@ -1,24 +1,31 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
+--liquibase formatted sql
+--changeset Ranjan:1
 CREATE TABLE customer
     (
-	 id UUID NOT NULL DEFAULT UUID_GENERATE_V4(),
-	 merchant_id CHARACTER(100),
-	 customer_id CHARACTER(100),
-	 name CHARACTER(100),
-	 email CHARACTER(100),
-	 phone_number CHARACTER(20),
-	 gst_in CHARACTER(18),
-	 gst_in_address CHARACTER(500),
-	 address1 CHARACTER(100),
-	 address2 CHARACTER(100),
-	 city CHARACTER(100),
-	 state CHARACTER(100),
-	 country CHARACTER(100),
-	 pincode CHARACTER(10),
-	 status CHARACTER(1),
-	 created_at TIMESTAMP NOT NULL,
-     updated_at TIMESTAMP NOT NULL,
-     created_by CHARACTER(200),
-     updated_by CHARACTER(200)
+	 id RAW(16) PRIMARY KEY NOT NULL ,
+	 merchant_id VARCHAR2(100),
+	 customer_id VARCHAR2(100),
+	 customer_name VARCHAR2(100),
+	 email VARCHAR2(100),
+	 phone_number VARCHAR2(20),
+	 gst_in VARCHAR2(18),
+	 gst_in_address VARCHAR2(500),
+	 address1 VARCHAR2(100),
+	 address2 VARCHAR2(100),
+	 city VARCHAR2(100),
+	 state VARCHAR2(100),
+	 country VARCHAR2(100),
+	 pincode VARCHAR2(10),
+	 status VARCHAR2(1),
+	 created_date NUMBER NOT NULL,
+     updated_date NUMBER NOT NULL,
+     created_by VARCHAR2(200),
+     updated_by VARCHAR2(200)
    )
+
+
+
+
+
+
+
