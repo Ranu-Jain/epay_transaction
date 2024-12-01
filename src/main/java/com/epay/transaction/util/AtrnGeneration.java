@@ -20,21 +20,22 @@ import java.security.SecureRandom;
 @Component
 @RequiredArgsConstructor
 public class AtrnGeneration {
-    public static String generateAtrnNumber() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder atrnNumber = new StringBuilder();
+    public class ATRNGenerator {
 
-        while (atrnNumber.length() < 14) {
-            int ch = (char) (random.nextInt(36) + '0');
-            if (ch > '9') ch += ('a' - '9' - 1);
-            atrnNumber.append(ch);
+    public static String generateATRN() {
+        Random random = new Random();
+
+        // Ensure the first digit is between 1 and 9
+        int firstDigit = random.nextInt(9) + 1; 
+
+        // Generate the remaining 14 digits
+        StringBuilder atrn = new StringBuilder(String.valueOf(firstDigit));
+        for (int i = 0; i < 14; i++) {
+            atrn.append(random.nextInt(10)); // Digits 0 to 9
         }
 
-        if (atrnNumber.charAt(0) == '0') {
-            atrnNumber.setCharAt(0, (char) (random.nextInt(9) + '1'));
-        }
-
-        return atrnNumber.toString();
+        return atrn.toString();
     }
+}
 
 }
