@@ -17,6 +17,7 @@ import com.sbi.epay.authentication.model.EPayPrincipal;
 import com.sbi.epay.authentication.service.JwtService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -39,36 +40,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentIntiationService {
     private final PaymentTxnDao paymentTxnDao;
-    private final TokenService tokenService;
-    private final TokenDao tokenDao;
-    private final TransactionUtil transactionUtil;
-
-    private final JwtService jwtService;
     private final UniqueIDGenearator uniqueIDGenearator;
     private final ObjectMapper objectMapper;
 
-    public TransactionResponse<PaymentResponse> initiatePayment(String token, String paymode, PaymentRequest paymentRequest) {
-        String jwtToken = token.replace("Bearer ", "").trim();
-        EPayPrincipal epayPrincipal = new EPayPrincipal();
-        epayPrincipal.setAuthenticationKey(tokenService.activeTokenid(jwtToken));
-        if (!jwtService.isTokenValid(jwtToken, epayPrincipal)) {
-            throw new ValidationException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, "Token"));
-        }
+    public TransactionResponse<PaymentResponse> initiatePayment(String payMode, String orderNumber) {
+        EPayPrincipal ePayPrincipal = (EPayPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // Step 1 : Fetch the Merchant details
+        // Step 2 : Fetch the Order details
+        // Step 3 : Fetch the Transaction Details based on Order Number which is not having the atrn number, If ATRN is present then its not eligiable for initiation
+        // Step 4 : Fetch the Transaction Charges Details
+        // Step 5 : Call the Payment Validator for initiation and validated the
+                    // Merchant is active or not
+                    // Order is in Booked or Open state or not
+                    // Merchant is having that payMode as initiate
+                    // Order Amount Validation as per merchant limit on daily, weekly, monthly
+                   // ETC...
+        // Step 6 : IF validation Passed then generate the ATRN number
+        // Step 7 : Call the Payment Service API for respective PayMode and share the to API
+        // Step 8 : Get the Payment Response from Payment service and share back to page
 
-        Claims claims = jwtService.getAllClaimsFromToken(token);
-        String merchantId = claims.get("mID", String.class);
-        String bookingId = paymentRequest.getOrderReferenceNo();
-        if (merchantId == null || bookingId == null) {
-            throw new ValidationException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "mid or orderReference Number"));
-        }
-        PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setAtrn(AtrnGeneration.generateAtrnNumber());
-        paymentDto.setAmount(paymentRequest.getAmount());
-        paymentDto.setOrderRefNum(paymentRequest.getOrderReferenceNo());
-        paymentDto.setCreatedDate(new Date().getTime());
-        paymentDto = paymentTxnDao.saveCustomer(paymentDto);
-        PaymentResponse paymentResponse = PaymentResponse.builder().atrn(paymentDto.getAtrn()).build();
-        return TransactionResponse.<PaymentResponse>builder().data(List.of(paymentResponse)).status(1).count(1L).build();
+        return TransactionResponse.<PaymentResponse>builder().data(List.of()).status(1).count(1L).build();
     }
 }
 

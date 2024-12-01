@@ -25,12 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/payment")
 public class PaymentIntiationController {
    private final PaymentIntiationService paymentService;
-    @PostMapping("/initiation/{payMode}")
-    public TransactionResponse<PaymentResponse> initiatePayment(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("payMode") String payMode,
-            @RequestBody PaymentRequest paymentRequest) {
-
-        return paymentService.initiatePayment(token, payMode, paymentRequest);
+    @PostMapping("/initiation/{payMode}/{orderNumber}")
+    public TransactionResponse<PaymentResponse> initiatePayment(@PathVariable("payMode") String payMode, @PathVariable("orderNumber") String orderNumber) {
+        return paymentService.initiatePayment(payMode, orderNumber);
     }
 }

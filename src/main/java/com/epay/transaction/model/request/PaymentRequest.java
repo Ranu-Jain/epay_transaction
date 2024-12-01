@@ -16,7 +16,5 @@ import lombok.Data;
  */
 @Data
 public class PaymentRequest {
-String orderReferenceNo;
-String paymode;
-Double amount;
+    String orderReferenceNo;
 }
