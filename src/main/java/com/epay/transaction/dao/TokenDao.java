@@ -45,9 +45,7 @@ public class TokenDao {
     private final ObjectMapper objectMapper;
     private final MerchantServicesClient merchantServicesClient;
     private final AuditRepository auditRepository;
-
     private static final LoggerUtility log = LoggerFactoryUtility.getLogger(TokenService.class);
-
     public Optional<MerchantDto> getActiveMerchantByKeys(String merchantApiKey, String merchantSecretKey) {
         log.info(" getActiveMerchantByKeys starts");
         Optional<MerchantDto> merchantDto = merchantCacheRepository.getActiveMerchantByKeys(merchantApiKey, merchantSecretKey);
@@ -57,14 +55,12 @@ public class TokenDao {
         log.info(" getActiveMerchantByKeys ends");
         return merchantDto;
     }
-
     public OrderDto getActiveTransactionByHashValue(String orderHash) {
         log.info(" request for Active Order using Hash from Order DB ");
         Order order = orderRepository.findActiveOrderByHash(orderHash).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Order")));
         log.info(" getting Active Order using Hash from Order DB ");
         return objectMapper.convertValue(order, OrderDto.class);
     }
-
     public TokenDto saveToken(TokenDto tokenDto,String Action) {
         log.info("adding token data in token table");
         Token token = objectMapper.convertValue(tokenDto, Token.class);
@@ -78,8 +74,6 @@ public class TokenDao {
         log.info(" token data saved in Audit table"); */
         return objectMapper.convertValue(token, TokenDto.class);
     }
-
-
     public Optional<MerchantDto>getActiveMerchantByMID(String mid) {
         log.info(" request for active merchantId from merchant cache ");
         Optional<MerchantDto> merchantDto = merchantCacheRepository.getActiveMerchantByMID(mid);
@@ -90,21 +84,16 @@ public class TokenDao {
         }
         return merchantDto;
     }
-
     public Optional<TokenDto> getActiveTokenByMID(String mID) {
         log.info(" request for Active Token using MID ");
         Token token = tokenRepository.findActiveTokenByMerchantId(mID);
         log.info(" getting for Active Token using MID ");
         return Optional.ofNullable(objectMapper.convertValue(token, TokenDto.class));
     }
-
     public TokenDto getActivetokenbyToken(String activetoken) {
         log.info(" request for Active Token using MID ");
         Token token = tokenRepository.findActiveTokenByGeneratedToken(activetoken);
         log.info(" getting for Active Token using MID ");
         return objectMapper.convertValue(token, TokenDto.class);
     }
-
-
-
 }

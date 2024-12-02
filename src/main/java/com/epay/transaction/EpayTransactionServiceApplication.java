@@ -5,6 +5,8 @@ import com.epay.transaction.config.audit.SpringSecurityAuditorAware;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.sbi.epay.encryptdecrypt.service.DecryptionService;
+import com.sbi.epay.encryptdecrypt.service.EncryptionService;
 import com.sbi.epay.hazelcast.service.HazelcastService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
@@ -52,25 +54,27 @@ public class EpayTransactionServiceApplication implements WebMvcConfigurer {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-
 	}
-
-
 	@Bean
 	public HazelcastInstance buidHazelcastInstance() {
 		Config config = new Config();
 		config.setClusterName(CLUSTER_NAME);
 		return Hazelcast.newHazelcastInstance(config);
 	}
-
 	@Bean
 	public HazelcastService buidHazelcastService() {
 		return new HazelcastService();
 	}
 
+	@Bean
+	public EncryptionService buildEncryptionService() {
+		return new EncryptionService();
+	}
 
+	@Bean
+	public DecryptionService buildDecryptionService() {
+		return new DecryptionService();
+	}
 }

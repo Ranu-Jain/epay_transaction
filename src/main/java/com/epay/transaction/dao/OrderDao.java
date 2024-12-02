@@ -4,9 +4,8 @@ package com.epay.transaction.dao;
 import com.epay.transaction.dto.MerchantDto;
 import com.epay.transaction.dto.OrderDto;
 import com.epay.transaction.entity.Order;
-import com.epay.transaction.entity.OrderStatus;
+import com.epay.transaction.util.enums.OrderStatus;
 import com.epay.transaction.externalservice.MerchantServicesClient;
-import com.epay.transaction.model.request.OrderStatusRequest;
 import com.epay.transaction.repositary.OrderRepository;
 import com.epay.transaction.repositary.cache.MerchantCacheRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
 

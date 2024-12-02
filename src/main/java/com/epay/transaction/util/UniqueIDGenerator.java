@@ -5,15 +5,18 @@ import com.epay.transaction.repositary.CustomerRepository;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 import java.text.MessageFormat;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
- * Class Name:UniqueIDGenearator
+ * Class Name:UniqueIDGenerator
  * *
  * Description:
  * *
@@ -24,9 +27,11 @@ import java.text.MessageFormat;
  * *
  * Version:1.0
  */
-@Data
+@RequiredArgsConstructor
 @Component
-public  class UniqueIDGenearator {
+public class UniqueIDGenerator {
+
+    LoggerUtility logger = LoggerFactoryUtility.getLogger(UniqueIDGenerator.class);
 
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -36,23 +41,15 @@ public  class UniqueIDGenearator {
 
     private static final int ALPHA_LENGTH = 5;
 
-    // Ensure the sequence is unique within a single JVM
     private static final AtomicLong lastTime = new AtomicLong(0);
 
-
-LoggerUtility logger= LoggerFactoryUtility.getLogger(UniqueIDGenearator.class);
     private final CustomerRepository customerRepository;
-
-    public UniqueIDGenearator(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
 
     /**
      * This method of generating customer ID
-     * @return
      */
-    public  String generateUniqueCustomerId() {
-        logger.info("CutomerId generation intiated");
+    public String generateUniqueCustomerId() {
+        logger.info("CustomerId generation initiated");
         int retryCount = 0;
         String customerId;
         do {
@@ -62,35 +59,20 @@ LoggerUtility logger= LoggerFactoryUtility.getLogger(UniqueIDGenearator.class);
         if (retryCount == 3 && customerRepository.existsByCustomerId(customerId)) {
             throw new TransactionException(ErrorConstants.ALREADY_EXIST_ERROR_CODE, MessageFormat.format(ErrorConstants.ALREADY_EXIST_ERROR_MESSAGE, "customerId"));
         }
-        logger.info("CutomerId created");
+        logger.info("CustomerId created successfully");
         return customerId;
     }
 
     public String generateOrderRequestId() {
-
-        long currentTime = System.nanoTime();
-
-        long uniqueTime = ensureUniqueTime(currentTime);
-
-        String nanosString = String.format("%015d", uniqueTime).substring(0, NANOS_LENGTH);
-
         Random random = new Random();
-
-        StringBuilder sb = new StringBuilder(ALPHA_LENGTH);
-
-        for (int i = 0; i < ALPHA_LENGTH; i++) {
-            sb.append(ALPHABET.charAt(random.nextInt(ALPHABET_LENGTH)));
-        }
-
-        return nanosString + sb.toString();
+        String nanosString = String.format("%015d", getUniqueTime()).substring(0, NANOS_LENGTH);
+        return IntStream.range(0, ALPHA_LENGTH).mapToObj(i -> String.valueOf(ALPHABET.charAt(random.nextInt(ALPHABET_LENGTH)))).collect(Collectors.joining("", nanosString, ""));
     }
 
-    private long ensureUniqueTime(long currentTime) {
-
-        // Atomically update the last time to ensure uniqueness
-        long previousTime;
-        do {
-            previousTime = lastTime.get();
+    private long getUniqueTime() {
+        while (true) {
+            long previousTime = lastTime.get();
+            long currentTime = System.nanoTime();
             if (currentTime > previousTime) {
                 if (lastTime.compareAndSet(previousTime, currentTime)) {
                     return currentTime;
@@ -101,7 +83,7 @@ LoggerUtility logger= LoggerFactoryUtility.getLogger(UniqueIDGenearator.class);
                     return newTime;
                 }
             }
-        } while (true);
+        }
     }
 
 }

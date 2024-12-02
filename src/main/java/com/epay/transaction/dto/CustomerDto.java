@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CustomerDto {
+public class CustomerDto extends BaseDto {
 
     private UUID id;
     private String mId;
@@ -28,11 +28,5 @@ public class CustomerDto {
     private String country;
     private String pinCode;
     private String status;
-    private String createdBy;
-    private String updatedBy;
-    private Long createdDate;
-    private Long updatedDate;
-
-
 
 }

@@ -83,7 +83,7 @@ public class MerchantServicesClient extends ApiClient {
                 .kek("V1pNLDs/WfX/7PF72xTXzeiNylWPkeeXXTU/krS7OoYukWYHzGv/JOlx8UK3Ly7iw2ygGoOp6BY9XwZP")
                 .aek("BiIZ5feKr16Td3XSpVywqXlwRNfSy9Gtis04WqEbD/0=")
                 .build();*/
-        /*return MerchantDto.builder()
+        return MerchantDto.builder()
                 .mID("1122323")
                 .status("active")
                 .mek("RX6rTMyBwIwdWvYQwB5CuEewO6WmFj1chO19h87YA/KVMn/yMAO5zkWxNnhOMYzC")

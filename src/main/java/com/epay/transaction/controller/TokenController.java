@@ -12,23 +12,18 @@ package com.epay.transaction.controller;
 
 import com.epay.transaction.model.response.TransactionResponse;
 import com.epay.transaction.service.TokenService;
-import com.sbi.epay.authentication.service.AuthenticationService;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/token")
 public class TokenController {
-
-    private static final LoggerUtility log = LoggerFactoryUtility.getLogger(TokenController.class);
+    private final LoggerUtility log = LoggerFactoryUtility.getLogger(this.getClass());
     private final TokenService tokenService;
-    private final AuthenticationService authenticationService;
-
 
     @PostMapping("/access")
     @Operation(summary = "Access Token Generation")
@@ -46,10 +41,7 @@ public class TokenController {
 
     @PostMapping("/invalidate")
     @Operation(summary = "Transaction Invalidation")
-    public TransactionResponse<String> invalidateToken(@RequestHeader("Content-Type") String contentType, @RequestHeader("Authorization") String authorizationHeader) {
-        log.info(" Token Invalidation Request,  contentType : {}, authorizationHeader : {}", contentType, authorizationHeader);
-        return tokenService.invalidateToken(authorizationHeader);
+    public TransactionResponse<String> invalidateToken() {
+        return tokenService.invalidateToken();
     }
-
-
 }

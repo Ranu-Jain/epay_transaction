@@ -1,6 +1,6 @@
 package com.epay.transaction.model.response;
 
-import com.epay.transaction.entity.OrderStatus;
+import com.epay.transaction.util.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

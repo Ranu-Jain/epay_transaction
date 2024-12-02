@@ -1,7 +1,6 @@
 package com.epay.transaction.repositary;
 
 
-import com.epay.transaction.entity.KeyManagement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

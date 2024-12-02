@@ -30,7 +30,6 @@ import java.util.List;
 
 @ControllerAdvice
 public class TransactionExceptionHandler extends ResponseEntityExceptionHandler {
-
     @ExceptionHandler(TransactionException.class)
     public ResponseEntity<Object> handleSecurityException(TransactionException ex) {
         ErrorDto errorDto = ErrorDto.builder()
@@ -39,7 +38,6 @@ public class TransactionExceptionHandler extends ResponseEntityExceptionHandler 
                 .build();
         return generateResponseWithErrors(List.of(errorDto));
     }
-
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Object> handleValidationException(ValidationException ex) {

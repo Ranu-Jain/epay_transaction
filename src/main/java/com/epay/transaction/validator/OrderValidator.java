@@ -2,14 +2,12 @@ package com.epay.transaction.validator;
 
 
 import com.epay.transaction.dto.OrderDto;
-import com.epay.transaction.entity.AggMerchantRfcRuleConfig;
 import com.epay.transaction.exceptions.ValidationException;
 import com.epay.transaction.repositary.AggMerchantRfcRuleConfigRepo;
 import com.epay.transaction.util.ErrorConstants;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;

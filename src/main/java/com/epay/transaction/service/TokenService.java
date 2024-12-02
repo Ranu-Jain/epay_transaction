@@ -85,9 +85,8 @@ public class TokenService {
         return generateToken(orderDto.getMid(), TokenType.TRANSACTION, buildAuthRequest(orderDto, merchantDto));
     }
 
-    public TransactionResponse<String> invalidateToken(String authorizationHeader) {
+    public TransactionResponse<String> invalidateToken() {
         log.info(" Invalidate Token - Service");
-        String jwtToken = authorizationHeader.replace("Bearer ", "").trim();
         String mId = extractMidFromToken(jwtToken);
         TokenDto activeTokenDto = tokenDao.getActiveTokenByMID(mId).orElseThrow(() -> new TransactionException(ErrorConstants.EXPIRED_TOKEN_ERROR_CODE, MessageFormat.format(ErrorConstants.EXPIRED_TOKEN_ERROR_MESSAGE, jwtToken)));
         activeTokenDto.setTokenValid(false);
@@ -98,12 +97,6 @@ public class TokenService {
         tokenDao.saveToken(activeTokenDto, "Invalidate Token");
         //push Notification
         return TransactionResponse.<String>builder().data(List.of("Token invalidated successfully")).status(1).build();
-    }
-
-    private String extractMidFromToken(String jwtToken) {
-        //TODO: MID will be get from Security Context
-        // For Testing
-        return "1000392";
     }
 
     private TransactionResponse<String> generateToken(String merchantId, TokenType tokenType, AccessTokenRequest accessTokenRequest) {

@@ -1,5 +1,7 @@
 package com.epay.transaction.model.request;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,20 +20,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@Data
 public class OrderRequest {
-    private String orderid;
-    private String mid;
-    private Double amount;
-    private String  customerId;
-    private String  currency;
-    private String  merchantOrderNumber;
-    private String  paymentMode;
-    private String  successFailURL;
-    private String  otherDetails;
-    private String multiAccount;
-    private String thirdPartyValidation;
-    private String  gatewayMapID;
-    private String  paymentLink;
-    private String orderHash;
-    private String status;
+    @NotNull
+    private String orderRequest;
 }

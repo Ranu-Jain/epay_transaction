@@ -1,4 +1,4 @@
-package com.epay.transaction.entity;
+package com.epay.transaction.util.enums;
 
 import jakarta.persistence.EnumType;
 

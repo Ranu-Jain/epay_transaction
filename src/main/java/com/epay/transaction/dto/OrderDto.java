@@ -2,8 +2,6 @@ package com.epay.transaction.dto;
 
 import lombok.*;
 
-import java.util.UUID;
-
 /**
  * Class Name: OrderDto
  * *
@@ -22,13 +20,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderDto {
-
+public class OrderDto extends BaseDto {
     private String id;
-    private String status;
-    private String hash;
-    private String merchantTokenId;
     private String mid;
+    private String hash;
     private String merchantCustomerId;
     private String countryId;
     private String currencyId;
@@ -43,13 +38,6 @@ public class OrderDto {
     private Integer orderRequestCount;
     private String callbackUrl;
     private String failedReason;
-    private String systemIp;
-    private String geoLocation;
-    private String systemDetails;
-    private String orderGenerationMode;
     private String otherDetails;
     private long expiry;
-    private String tpv;
-    private String token;
-
 }

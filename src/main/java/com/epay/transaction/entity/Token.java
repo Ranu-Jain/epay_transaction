@@ -34,12 +34,6 @@ public class Token {
     @Column(name = "id", nullable = false, updatable = false,unique = true)
     private UUID id;
 
-/*
-    @Id
-    @Column(name = "id", nullable = false)
-    private byte[] id; // RAW(16) is typically mapped to a byte array in Java
-*/
-
     @Column(name = "merchant_id", nullable = false)
     private String merchantId;
 

@@ -1,16 +1,13 @@
 package com.epay.transaction.controller;
 
-
-
 import com.epay.transaction.dto.OrderDto;
-import com.epay.transaction.entity.Order;
-import com.epay.transaction.model.request.OrderStatusRequest;
+import com.epay.transaction.model.request.OrderRequest;
 import com.epay.transaction.model.response.OrderResponse;
 import com.epay.transaction.model.response.TransactionResponse;
 import com.epay.transaction.service.OrderService;
-import com.epay.transaction.util.OrderDetail;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,39 +24,27 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/order")
+@Validated
 public class OrderController {
 
-    private final OrderService OrderService;
+    private final OrderService orderService;
 
-    @PostMapping("/order/createorder")
-    public TransactionResponse<String> createOrder(@RequestBody OrderDetail orderRequest, @RequestHeader (name="Authorization") String token) {
-        return OrderService.createOrder(orderRequest,token);
-
-    }
-
-    @GetMapping("/order/{orderNumber}")
-    public TransactionResponse<OrderDto> getOrder(@PathVariable("orderNumber") String orderNumber) {
-             return OrderService.getOrderById(orderNumber);
-         }
-
-    @GetMapping("/orders/{mid}/{pageSize}/{pageNumber}")
-    public TransactionResponse<Page<Order>> getAllOrder(@PathVariable("mid") String mid,@PathVariable("pageSize") int pageSize, @PathVariable("pageNumber") int pageNumber)
-    {
-        return OrderService.getOrderByPages(mid,pageSize,pageNumber);
-    }
-
-
-    @PostMapping("/order/updateOrder")
-    public TransactionResponse<OrderResponse> updateOrderStatus(@RequestBody OrderStatusRequest orderStatusRequest) {
-             return OrderService.updateOrderStatus(orderStatusRequest);
+    @PostMapping
+    public TransactionResponse<String> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
+        return orderService.createOrder(orderRequest);
 
     }
 
-    @GetMapping("/order/validatid/{orderNumber}")
-    public TransactionResponse<Boolean> validateOrderid(@PathVariable("orderNumber") String orderNumber) {
-          return OrderService.validateOrderid(orderNumber);
-
+    @GetMapping("/{orderNumber}")
+    public TransactionResponse<OrderDto> getOrderByOrderNumber(@PathVariable("orderNumber") String orderNumber) {
+        return orderService.getOrderById(orderNumber);
     }
 
+
+    @PostMapping("/{orderNumber}/{status}")
+    public TransactionResponse<OrderResponse> updateOrderStatus(@PathVariable("orderNumber") String orderNumber, @PathVariable("status") String status) {
+        return orderService.updateOrderStatus(orderStatusRequest);
+    }
 
 }
