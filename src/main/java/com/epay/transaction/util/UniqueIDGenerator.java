@@ -31,10 +31,10 @@ import java.util.stream.IntStream;
 @Component
 public class UniqueIDGenerator {
 
-    private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    private static final int ALPHABET_LENGTH = ALPHABET.length();
-    private static final int NANOS_LENGTH = 15;
-    private static final int ALPHA_LENGTH = 5;
+    private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private final int ALPHABET_LENGTH = ALPHABET.length();
+    private final int NANOS_LENGTH = 15;
+    private final int ALPHA_LENGTH = 5;
     private static final AtomicLong lastTime = new AtomicLong(0);
     private final CustomerRepository customerRepository;
     private final OrderRepository orderRepository;

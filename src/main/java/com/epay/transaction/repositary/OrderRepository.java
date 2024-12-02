@@ -24,7 +24,7 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    @Query("SELECT t FROM Order t WHERE t.hash =:orderHash AND t.status in ['ACTIVE', 'BOOKED']")
+    @Query("SELECT t FROM Order t WHERE t.hash = :orderHash AND t.status IN ('ACTIVE', 'BOOKED')")
     Optional<Order> findActiveOrderByHash(@Param("orderHash") String orderHash);
 
     Optional<Order> findByOrderRefNumber(String id);
