@@ -10,36 +10,38 @@
 
 package com.epay.transaction.controller;
 
-import com.epay.transaction.service.TokenService;
 import com.epay.transaction.model.response.TransactionResponse;
+import com.epay.transaction.service.TokenService;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
-@RequestMapping("/v1/token")
 @RequiredArgsConstructor
+@RequestMapping("/token")
 public class TokenController {
-
-    private static final LoggerUtility log = LoggerFactoryUtility.getLogger(TokenController.class);
-
+    private final LoggerUtility log = LoggerFactoryUtility.getLogger(this.getClass());
     private final TokenService tokenService;
 
     @PostMapping("/access")
     @Operation(summary = "Access Token Generation")
-    public TransactionResponse<String> generateAccessToken(@RequestHeader("Merchant-API-Key") String merchantApiKey, @RequestHeader("Merchant-Secret-Key") String merchantSecretKey) {
-        log.info(" Token API Controller access token Start ");
-       return tokenService.generateAccessToken(merchantApiKey, merchantSecretKey);
+    public TransactionResponse<String> generateAccessToken(@RequestHeader("Merchant-API-Key-Id") String merchantApiKeyId, @RequestHeader("Merchant-API-Key-Secret") String merchantApiKeySecret) {
+        log.info("Access Token Request,  merchantApiKeyId : {}, merchantApiKeySecret : {}", merchantApiKeyId, merchantApiKeySecret);
+        return tokenService.generateToken(merchantApiKeyId, merchantApiKeySecret);
     }
 
     @PostMapping("/transaction/{orderHash}")
     @Operation(summary = "Transaction Token Generation")
     public TransactionResponse<String> generateTransactionToken(@PathVariable("orderHash") String orderHash) {
-        log.info(" Token API Controller transaction token Start ");
+        log.info("Transaction Token Request,  orderHash : {}", orderHash);
         return tokenService.generateTransactionToken(orderHash);
     }
 
+    @PostMapping("/invalidate")
+    @Operation(summary = "Transaction Invalidation")
+    public TransactionResponse<String> invalidateToken() {
+        return tokenService.invalidateToken();
+    }
 }

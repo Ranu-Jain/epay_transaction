@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 20
       author: Shilpa Kothre
       changes:
         - sqlFile:
-            path: db/migration/1731069653317_create_table_token.sql
+            path: db/scripts/1731069653317_create_table_token.sql
             relativeToChangelogFile: false
 
 

@@ -32,12 +32,6 @@ public class TransactionResponse<T> {
 
     @Override
     public String toString() {
-        return "ResponseDto{" +
-                "status=" + status +
-                ", data=" + data +
-                ", count=" + count +
-                ", total=" + total +
-                ", errors=" + errors +
-                '}';
+        return "TransactionResponse{" + "status=" + status + ", data=" + data + ", count=" + count + ", total=" + total + ", errors=" + errors + '}';
     }
 }

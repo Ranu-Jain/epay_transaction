@@ -1,93 +1,66 @@
 package com.epay.transaction.entity;
 
+import com.epay.transaction.util.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+
 import java.util.UUID;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
-@Table(name = "merchant_order_info")
+@Table(name = "order")
 public class Order {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(nullable = false, updatable = false)
-   private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    private UUID id;
 
-   @Column(name = "status", length = 50)
-   private String status;
+    @Column(name = "merchant_id")
+    private String mId;
 
-   @Column(name = "order_hash", length = 50)
-   private String hash;
+    private String customerId;
 
-   @Column(name = "merchant_token_id")
-   private UUID merchantTokenId;
+    private String currencyCode;
 
-   @Column(name = "merchant_id")
-   private UUID mID;
+    private Double orderAmount;
 
-   @Column(name = "merchant_customer_id")
-   private UUID merchantCustomerId;
+    private String orderRefNumber;
 
-   @Column(name = "country_id", length = 50)
-   private String countryId;
+    private String sbiOrderRefNumber;
 
-   @Column(name = "currency_id", length = 50)
-   private String currencyId;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-   @Column(name = "amount")
-   private Double amount;
+    @Column(name = "other_details", columnDefinition = "CLOB")
+    private String otherDetails;
+    private Integer expiry;
 
-   @Column(name = "order_ref_num")
-   private String orderRefNum;
+    @Column(name = "multi_accounts", columnDefinition = "CLOB")
+    private String multiAccounts;
 
-   @Column(name = "operation_mode", length = 50)
-   private String operationMode;
+    private String paymentMode;
 
-   @Column(name = "txn_mode", length = 50)
-   private String txnMode;
+    private String orderHash;
 
-   @Column(name = "payment_mode", length = 50)
-   private String paymentMode;
+    @Column(name = "created_by")
+    private String createdBy;
 
-   @Column(name = "access_mode", length = 50)
-   private String accessMode;
+    @Column(name = "updated_by")
+    private String updatedBy;
 
-   @Column(name = "order_status", length = 50)
-   private String orderStatus;
+    @CreatedDate
+    @Column(name = "created_date")
+    private Long createdDate;
 
-   @Column(name = "order_request_count")
-   private Integer orderRequestCount;
-
-   @Column(name = "callback_url")
-   private String callbackUrl;
-
-   @Column(name = "failed_reason")
-   private String failedReason;
-
-   @Column(name = "system_ip")
-   private String systemIp;
-
-   @Column(name = "geo_location")
-   private String geoLocation;
-
-   @Column(name = "system_details", length = 50)
-   private String systemDetails;
-
-   @Column(name = "order_generation_mode", length = 50)
-   private String orderGenerationMode;
-
-   @Column(name = "other_details", columnDefinition = "CLOB")
-   private String otherDetails;
-
-   @Column(name = "expiry")
-   private Integer expiry;
-
-   @Column(name = "tpv", columnDefinition = "CLOB")
-   private String tpv;
+    @Column(name = "updated_date")
+    private Long updatedDate;
 
 }
