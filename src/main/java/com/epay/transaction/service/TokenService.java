@@ -15,17 +15,23 @@ import com.epay.transaction.dto.OrderDto;
 import com.epay.transaction.dto.TokenDto;
 import com.epay.transaction.exceptions.TransactionException;
 import com.epay.transaction.model.response.TransactionResponse;
+import com.epay.transaction.util.EPayIdentityUtil;
 import com.epay.transaction.util.ErrorConstants;
+import com.epay.transaction.util.enums.TokenStatus;
 import com.sbi.epay.authentication.model.AccessTokenRequest;
+import com.sbi.epay.authentication.model.EPayPrincipal;
+import com.sbi.epay.authentication.model.TokenRequest;
 import com.sbi.epay.authentication.model.TransactionTokenRequest;
 import com.sbi.epay.authentication.service.AuthenticationService;
 import com.sbi.epay.authentication.util.enums.TokenType;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -36,40 +42,23 @@ public class TokenService {
     private final TokenDao tokenDao;
     private final AuthenticationService authService;
 
-    private static TokenDto buildTokenDTO(String merchantId, TokenType tokenType) {
-        return TokenDto.builder().isTokenValid(Boolean.FALSE).merchantId(merchantId).tokenType(tokenType.name()).createdAt(System.currentTimeMillis()).updatedAt(System.currentTimeMillis()).build();
+    private static TransactionTokenRequest buildTransactionTokenRequest(OrderDto orderDto, MerchantDto merchantDto) {
+        TransactionTokenRequest transactionTokenRequest = new TransactionTokenRequest();
+        transactionTokenRequest.setTokenType(TokenType.TRANSACTION);
+        transactionTokenRequest.setMid(orderDto.getMId());
+        transactionTokenRequest.setSbiOrderReferenceNumber(orderDto.getSbiOrderRefNumber());
+        transactionTokenRequest.setCustomerId(orderDto.getCustomerId());
+        transactionTokenRequest.setExpirationTime(merchantDto.getTransactionTokenExpiryTime());
+        return transactionTokenRequest;
     }
 
-    private static AccessTokenRequest buildAuthRequest(MerchantDto merchantDto) {
-        log.info(" Building AuthRequest starts ");
-        AccessTokenRequest authRequest = new AccessTokenRequest();
-        authRequest.setTokenType(TokenType.ACCESS);
-        authRequest.setMid(merchantDto.getMID());
-        authRequest.setSecretKey(merchantDto.getSecretKey());
-        authRequest.setApiKey(merchantDto.getApiKey());
-        authRequest.setExpirationTime(Math.toIntExact(merchantDto.getAccessTokenExpiryTime()));
-        log.info(" Building AuthRequest ends ");
-        return authRequest;
-    }
-
-    private static TransactionTokenRequest buildAuthRequest(OrderDto orderDto, MerchantDto merchantDto) {
-        TransactionTokenRequest authRequest = new TransactionTokenRequest();
-        authRequest.setTokenType(TokenType.TRANSACTION);
-        authRequest.setMid(orderDto.getMid());
-        authRequest.setSbiOrderReferenceNumber(orderDto.getSbiOrderRefNum());
-
-        return authRequest;
-
-
-    }
-
-    public TransactionResponse<String> generateAccessToken(String merchantApiKeyId, String merchantApiKeySecret) {
+    public TransactionResponse<String> generateToken(String merchantApiKeyId, String merchantApiKeySecret) {
         log.info("Access Token Request for merchantApiKey {0} merchantApiKeySecret {1}", merchantApiKeyId, merchantApiKeySecret);
         //Step 1 : Get Merchant Object
         MerchantDto merchantDto = tokenDao.getActiveMerchantByKeys(merchantApiKeyId, merchantApiKeySecret).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
         //Step 2 : Token Generation
         log.info(" generating Access token ");
-        return generateToken(merchantDto.getMID(), TokenType.ACCESS, buildAuthRequest(merchantDto));
+        return generateToken(buildAccessTokenRequest(merchantDto));
     }
 
     public TransactionResponse<String> generateTransactionToken(String orderHash) {
@@ -78,75 +67,71 @@ public class TokenService {
         OrderDto orderDto = tokenDao.getActiveTransactionByHashValue(orderHash);
         //Step 2 : Get Merchant Object
         log.info(" request for merchant Info ");
-        MerchantDto merchantDto = tokenDao.getActiveMerchantByMID(orderDto.getMid()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
-        log.info(" getting for merchant Info ");
+        MerchantDto merchantDto = tokenDao.getActiveMerchantByMID(orderDto.getMId()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
         //Step 3 : Token Generation
         log.info(" generating transaction token ");
-        return generateToken(orderDto.getMid(), TokenType.TRANSACTION, buildAuthRequest(orderDto, merchantDto));
+        return generateToken(buildTransactionTokenRequest(orderDto, merchantDto));
     }
 
     public TransactionResponse<String> invalidateToken() {
         log.info(" Invalidate Token - Service");
-        String mId = extractMidFromToken(jwtToken);
-        TokenDto activeTokenDto = tokenDao.getActiveTokenByMID(mId).orElseThrow(() -> new TransactionException(ErrorConstants.EXPIRED_TOKEN_ERROR_CODE, MessageFormat.format(ErrorConstants.EXPIRED_TOKEN_ERROR_MESSAGE, jwtToken)));
-        activeTokenDto.setTokenValid(false);
-        activeTokenDto.setExpiredAt(System.currentTimeMillis());
-        activeTokenDto.setStatus("INACTIVE");
-        activeTokenDto.setUpdatedAt(System.currentTimeMillis());
-        activeTokenDto.setUpdatedBy(System.getProperty("user.name"));
-        tokenDao.saveToken(activeTokenDto, "Invalidate Token");
-        //push Notification
+        EPayPrincipal ePayPrincipal = EPayIdentityUtil.getUserPrincipal();
+        TokenDto tokenDto = tokenDao.getActiveTokenByMID(ePayPrincipal.getMid()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Active Token")));
+        tokenDto.setTokenValid(false);
+        tokenDto.setExpiredAt(System.currentTimeMillis());
+        tokenDto.setStatus(TokenStatus.INACTIVE.name());
+        tokenDto.setUpdatedAt(System.currentTimeMillis());
+        tokenDao.saveToken(tokenDto);
         return TransactionResponse.<String>builder().data(List.of("Token invalidated successfully")).status(1).build();
     }
 
-    private TransactionResponse<String> generateToken(String merchantId, TokenType tokenType, AccessTokenRequest accessTokenRequest) {
+    private AccessTokenRequest buildAccessTokenRequest(MerchantDto merchantDto) {
+        log.info(" Building AuthRequest starts ");
+        AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
+        accessTokenRequest.setMid(merchantDto.getMID());
+        accessTokenRequest.setSecretKey(merchantDto.getSecretKey());
+        accessTokenRequest.setApiKey(merchantDto.getApiKey());
+        accessTokenRequest.setTokenType(TokenType.ACCESS);
+        accessTokenRequest.setExpirationTime(merchantDto.getAccessTokenExpiryTime());
+        log.info(" Building AuthRequest ends ");
+        return accessTokenRequest;
+    }
+
+    private TransactionResponse<String> generateToken(TokenRequest tokenRequest) {
         //Step 1 : Save Initial Token Request in DB
         log.info(" saving token details initially ");
-        TokenDto tokenDto = tokenDao.saveToken(buildTokenDTO(merchantId, tokenType), "Add Token");
+        TokenDto tokenDto = tokenDao.saveToken(buildTokenDTO(tokenRequest.getMid(), tokenRequest.getTokenType()));
         //Step 2 : Generate Token by Authentication Service
         log.info(" Generating token using Utility ");
-        String token = authService.generateAccessToken(accessTokenRequest);
-        tokenDto.setGeneratedToken(token);
-        tokenDto.setTokenValid(Boolean.TRUE);
-        tokenDto.setStatus("ACTIVE");
-        tokenDto.setExpiredAt(System.currentTimeMillis() * 60 * 1000);
-        tokenDto.setCreatedAt(System.currentTimeMillis());
-        tokenDto.setCreatedBy(System.getProperty("user.name"));
-        tokenDto.setUpdatedBy(System.getProperty("user.name"));
+        buildTokenDto(tokenRequest, tokenDto);
         //Step 3 : Save Token Request in DB with token value
         log.info(" updating token details after generating token ");
-        tokenDao.saveToken(tokenDto, "Update Token");
+        tokenDao.saveToken(tokenDto);
         log.info(" updated token details after generating token ");
         return TransactionResponse.<String>builder().data(List.of(tokenDto.getGeneratedToken())).build();
     }
 
-    private TransactionResponse<String> generateToken(String merchantId, TokenType tokenType, TransactionTokenRequest accessTokenRequest) {
-        //Step 1 : Save Initial Token Request in DB
-        log.info(" saving token details initially ");
-        TokenDto tokenDto = tokenDao.saveToken(buildTokenDTO(merchantId, tokenType), "Add Token");
-        //Step 2 : Generate Token by Authentication Service
-        log.info(" Generating token using Utility ");
-        String token = authService.generateTransactionToken(accessTokenRequest);
-        tokenDto.setGeneratedToken(token);
+    private void buildTokenDto(TokenRequest tokenRequest, TokenDto tokenDto) {
+        tokenDto.setGeneratedToken(getToken(tokenRequest));
         tokenDto.setTokenValid(Boolean.TRUE);
-        tokenDto.setStatus("ACTIVE");
-        tokenDto.setExpiredAt(System.currentTimeMillis() * 60 * 1000);
-        tokenDto.setCreatedAt(System.currentTimeMillis());
-        tokenDto.setCreatedBy(System.getProperty("user.name"));
-        tokenDto.setUpdatedBy(System.getProperty("user.name"));
-        //Step 3 : Save Token Request in DB with token value
-        log.info(" updating token details after generating token ");
-        tokenDao.saveToken(tokenDto, "Update Token");
-        log.info(" updated token details after generating token ");
-        return TransactionResponse.<String>builder().data(List.of(tokenDto.getGeneratedToken())).build();
+        tokenDto.setStatus(TokenStatus.ACTIVE.name());
+        tokenDto.setExpiredAt(DateUtils.addMinutes(new Date(), tokenRequest.getExpirationTime()).getTime());
+    }
+
+    private TokenDto buildTokenDTO(String merchantId, TokenType tokenType) {
+        return TokenDto.builder().isTokenValid(Boolean.FALSE).status(TokenStatus.NOT_GENERATED.name()).merchantId(merchantId).tokenType(tokenType.name()).createdAt(System.currentTimeMillis()).updatedAt(System.currentTimeMillis()).createdBy(System.getProperty("user.name")).updatedBy(System.getProperty("user.name")).build();
     }
 
 
-    public String activeTokenid(String token) {
-        log.info("based on token get active id mid ");
-        TokenDto jwtToken = tokenDao.getActivetokenbyToken(token);
-        return jwtToken.getMerchantId();
+    private String getToken(TokenRequest tokenRequest) {
+        return switch (tokenRequest.getTokenType()) {
+            case ACCESS -> authService.generateAccessToken((AccessTokenRequest) tokenRequest);
+            case TRANSACTION -> authService.generateTransactionToken((TransactionTokenRequest) tokenRequest);
+            default ->
+                    throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, "Token Type"));
+        };
     }
+
 
 }
 

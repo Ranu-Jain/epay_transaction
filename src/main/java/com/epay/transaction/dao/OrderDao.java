@@ -4,16 +4,17 @@ package com.epay.transaction.dao;
 import com.epay.transaction.dto.MerchantDto;
 import com.epay.transaction.dto.OrderDto;
 import com.epay.transaction.entity.Order;
-import com.epay.transaction.util.enums.OrderStatus;
+import com.epay.transaction.exceptions.TransactionException;
 import com.epay.transaction.externalservice.MerchantServicesClient;
 import com.epay.transaction.repositary.OrderRepository;
 import com.epay.transaction.repositary.cache.MerchantCacheRepo;
+import com.epay.transaction.util.ErrorConstants;
+import com.epay.transaction.util.enums.OrderStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.text.MessageFormat;
 import java.util.Optional;
 
 /**
@@ -27,7 +28,6 @@ import java.util.Optional;
  * *
  * Version:1.0
  */
-
 
 
 @Component
@@ -46,34 +46,23 @@ public class OrderDao {
         return merchantDto;
     }
 
-
-    public OrderDto saveOrder(OrderDto customerDto) {
-        Order order = objectMapper.convertValue(customerDto, Order.class);
+    public OrderDto saveOrder(OrderDto orderDto) {
+        Order order = objectMapper.convertValue(orderDto, Order.class);
         order = orderRepository.save(order);
         return objectMapper.convertValue(order, OrderDto.class);
     }
 
-    public OrderDto updateOrder(OrderStatusRequest orderStatusRequest) {
-        Order order = orderRepository.findById(orderStatusRequest.getOrderid()).get();
-        order.setStatus(OrderStatus.valueOf(orderStatusRequest.getStatus()));
+    public OrderDto updateOrderStatus(String orderRefNumber, String status) {
+        //TODO : Need to check status and add some more validation
+        Order order = orderRepository.findByOrderRefNumber(orderRefNumber).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Order")));
+        order.setStatus(OrderStatus.valueOf(status));
         Order saveOrder = orderRepository.save(order);
-        return objectMapper.convertValue(saveOrder,OrderDto.class);
+        return objectMapper.convertValue(saveOrder, OrderDto.class);
     }
 
-    public OrderDto getOrder(String orderid) {
-        Optional<Order> order = orderRepository.findById(orderid);
-      return  objectMapper.convertValue(order, OrderDto.class);
+    public OrderDto getOrderByOrderRefNumber(String orderRefNumber) {
+        Optional<Order> order = orderRepository.findByOrderRefNumber(orderRefNumber);
+        return objectMapper.convertValue(order, OrderDto.class);
     }
-
-    public Page<Order> getOrderByPages(String mid, int pageSize, int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Order> pages = orderRepository.findByMid(mid,pageable);
-        return pages;
-    }
-    public Boolean getOrderStatus(String orderId)
-    {
-        return orderRepository.existsById(orderId);
-    }
-
 
 }

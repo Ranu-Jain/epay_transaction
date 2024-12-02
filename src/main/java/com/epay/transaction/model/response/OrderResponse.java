@@ -1,11 +1,6 @@
 package com.epay.transaction.model.response;
 
-import com.epay.transaction.util.enums.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import lombok.*;
 
 
 /**
@@ -26,25 +21,6 @@ import lombok.Builder;
 @Setter
 @Builder
 public class OrderResponse {
-    private String orderId;
-    private OrderStatus status;
-    private String mId;
-    private Double amount;
-    private String customerId;
-    private String currency;
-    private String merchantOrderNumber;
-    private String bankOrderNumber;
-    private String paymentMode;
-    private String successFailURL;
-    private String otherDetails;
-    private String multiAccount;
-    private String thirdPartyValidation;
-    private String gatewayMapID;
-    private String paymentURL;
-    private int attempts;
-    private long createdAt;
-
-
-
-
+    private String orderRefNum;
+    private String orderResponse;
 }

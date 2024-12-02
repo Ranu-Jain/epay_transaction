@@ -19,10 +19,7 @@ public class ErrorConstants {
     public static final String INVALID_ERROR_MESSAGE = "{0} is Invalid.";
     public static final String ALREADY_EXIST_ERROR_CODE = "1003";
     public static final String ALREADY_EXIST_ERROR_MESSAGE = "{0} is already exist.";
-    public static final String EXPIRED_TOKEN_ERROR_CODE = "1501";
-    public static final String EXPIRED_TOKEN_ERROR_MESSAGE = "Token {0} is already Expired";
-    public static final String INVALID_JSON_FORMAT_CODE = "1004";
-    public static final String INVALID_JSON_FORMAT_MESSAGE = "{0} is invalid Json format.";
+
     private ErrorConstants() {
     }
 }

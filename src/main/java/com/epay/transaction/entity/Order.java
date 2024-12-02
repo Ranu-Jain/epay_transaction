@@ -6,37 +6,61 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "merchant_order_info")
+@Table(name = "order")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private String id;
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
-    private String orderHash;
+    private UUID id;
+
     @Column(name = "merchant_id")
     private String mId;
+
     private String customerId;
-    private String currencyId;
-    private Double amount;
-    private String orderRefNum;
-    private String operationMode;
-    private String paymentMode;
-    @Column(name = "callback_url")
-    private String callbackUrl;
-    @Column(name = "failed_reason")
-    private String failedReason;
+
+    private String currencyCode;
+
+    private Double orderAmount;
+
+    private String orderRefNumber;
+
+    private String sbiOrderRefNumber;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @Column(name = "other_details", columnDefinition = "CLOB")
     private String otherDetails;
-    @Column(name = "expiry")
     private Integer expiry;
+
+    @Column(name = "multi_accounts", columnDefinition = "CLOB")
+    private String multiAccounts;
+
+    private String paymentMode;
+
+    private String orderHash;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @CreatedDate
+    @Column(name = "created_date")
+    private Long createdDate;
+
+    @Column(name = "updated_date")
+    private Long updatedDate;
 
 }

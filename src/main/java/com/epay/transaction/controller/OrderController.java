@@ -1,6 +1,5 @@
 package com.epay.transaction.controller;
 
-import com.epay.transaction.dto.OrderDto;
 import com.epay.transaction.model.request.OrderRequest;
 import com.epay.transaction.model.response.OrderResponse;
 import com.epay.transaction.model.response.TransactionResponse;
@@ -31,20 +30,19 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public TransactionResponse<String> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
+    public TransactionResponse<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
         return orderService.createOrder(orderRequest);
-
     }
 
-    @GetMapping("/{orderNumber}")
-    public TransactionResponse<OrderDto> getOrderByOrderNumber(@PathVariable("orderNumber") String orderNumber) {
-        return orderService.getOrderById(orderNumber);
+    @GetMapping("/{orderRefNumber}")
+    public TransactionResponse<OrderResponse> getOrderByOrderRefNumber(@PathVariable("orderRefNumber") String orderRefNumber) {
+        return orderService.getOrderByOrderRefNumber(orderRefNumber);
     }
 
 
-    @PostMapping("/{orderNumber}/{status}")
-    public TransactionResponse<OrderResponse> updateOrderStatus(@PathVariable("orderNumber") String orderNumber, @PathVariable("status") String status) {
-        return orderService.updateOrderStatus(orderStatusRequest);
+    @PostMapping("/{orderRefNumber}/{status}")
+    public TransactionResponse<String> updateOrderStatus(@PathVariable("orderRefNumber") String orderRefNumber, @PathVariable("status") String status) {
+        return orderService.updateOrderStatus(orderRefNumber, status);
     }
 
 }

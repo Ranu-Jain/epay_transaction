@@ -2,9 +2,9 @@ package com.epay.transaction.util;
 
 import com.epay.transaction.exceptions.TransactionException;
 import com.epay.transaction.repositary.CustomerRepository;
+import com.epay.transaction.repositary.OrderRepository;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
@@ -31,31 +31,26 @@ import java.util.stream.IntStream;
 @Component
 public class UniqueIDGenerator {
 
-    LoggerUtility logger = LoggerFactoryUtility.getLogger(UniqueIDGenerator.class);
-
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
     private static final int ALPHABET_LENGTH = ALPHABET.length();
-
     private static final int NANOS_LENGTH = 15;
-
     private static final int ALPHA_LENGTH = 5;
-
     private static final AtomicLong lastTime = new AtomicLong(0);
-
     private final CustomerRepository customerRepository;
+    private final OrderRepository orderRepository;
+    LoggerUtility logger = LoggerFactoryUtility.getLogger(UniqueIDGenerator.class);
 
     /**
      * This method of generating customer ID
      */
     public String generateUniqueCustomerId() {
         logger.info("CustomerId generation initiated");
-        int retryCount = 0;
-        String customerId;
-        do {
+        int retryCount = 1;
+        String customerId = "Cust_" + RandomStringUtils.randomAlphanumeric(16);
+        while (retryCount < 3 && customerRepository.existsByCustomerId(customerId)) {
             customerId = "Cust_" + RandomStringUtils.randomAlphanumeric(16);
             retryCount++;
-        } while (retryCount < 3 && customerRepository.existsByCustomerId(customerId));
+        }
         if (retryCount == 3 && customerRepository.existsByCustomerId(customerId)) {
             throw new TransactionException(ErrorConstants.ALREADY_EXIST_ERROR_CODE, MessageFormat.format(ErrorConstants.ALREADY_EXIST_ERROR_MESSAGE, "customerId"));
         }
@@ -63,7 +58,22 @@ public class UniqueIDGenerator {
         return customerId;
     }
 
-    public String generateOrderRequestId() {
+    public String generateSBIOrderRefNumber() {
+        logger.info("SBIOrderRefNumber generation initiated");
+        int retryCount = 1;
+        String sbiOrderRefNumber = getRefNumber();
+        while (retryCount < 3 && orderRepository.existsBySbiOrderRefNum(sbiOrderRefNumber)) {
+            sbiOrderRefNumber = getRefNumber();
+            retryCount++;
+        }
+        if (retryCount == 3 && orderRepository.existsBySbiOrderRefNum(sbiOrderRefNumber)) {
+            throw new TransactionException(ErrorConstants.ALREADY_EXIST_ERROR_CODE, MessageFormat.format(ErrorConstants.ALREADY_EXIST_ERROR_MESSAGE, "SBIOrderRefNumber"));
+        }
+        logger.info("SBIOrderRefNumber created successfully");
+        return sbiOrderRefNumber;
+    }
+
+    private String getRefNumber() {
         Random random = new Random();
         String nanosString = String.format("%015d", getUniqueTime()).substring(0, NANOS_LENGTH);
         return IntStream.range(0, ALPHA_LENGTH).mapToObj(i -> String.valueOf(ALPHABET.charAt(random.nextInt(ALPHABET_LENGTH)))).collect(Collectors.joining("", nanosString, ""));

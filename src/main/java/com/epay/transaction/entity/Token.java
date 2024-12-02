@@ -1,11 +1,10 @@
 /**
- *
- *  Copyright (c) [2024] [State Bank of India]
- *  All rights reserved.
- *
- *  Author:@V0000001(Shilpa Kothre)
- *
- *  Version:1.0
+ * Copyright (c) [2024] [State Bank of India]
+ * All rights reserved.
+ * <p>
+ * Author:@V0000001(Shilpa Kothre)
+ * <p>
+ * Version:1.0
  * /
  */
 
@@ -16,22 +15,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "token", indexes = {
-        @Index(name = "idx_merchant_id", columnList = "merchant_id")
-})
+@Table(name = "token", indexes = {@Index(name = "idx_merchant_id", columnList = "merchant_id")})
 public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false, updatable = false,unique = true)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
     private UUID id;
 
     @Column(name = "merchant_id", nullable = false)
@@ -72,42 +67,5 @@ public class Token {
 
     @Column(name = "updated_by")
     private String updatedBy;
-
-
-
-
-/*
-
-    @Column(name = "merchant_id", nullable = false, length = 255)
-    private String merchantId;
-    @Column(name = "token_type", nullable = false, length = 50)
-    private String tokenType;
-    @Column(name = "generated_token", length = 200)
-    private String generatedToken;
-    @Column(name = "is_token_valid", nullable = false)
-    private Boolean isTokenValid;
-    @Column(name = "failed_reason", length = 100)
-    private String failedReason;
-    @Column(name = "remarks", length = 100)
-    private String remarks;
-    @Column(name = "status", length = 20)
-    private String status;
-    @Column(name = "created_by", length = 200)
-    private String createdBy;
-    @Column(name = "updated_by", length = 200)
-    private String updatedBy;
-
-*/
-
-
-
-
-
-
-
-
-
-
-
 
 }

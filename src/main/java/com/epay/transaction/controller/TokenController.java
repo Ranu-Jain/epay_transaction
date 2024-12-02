@@ -29,7 +29,7 @@ public class TokenController {
     @Operation(summary = "Access Token Generation")
     public TransactionResponse<String> generateAccessToken(@RequestHeader("Merchant-API-Key-Id") String merchantApiKeyId, @RequestHeader("Merchant-API-Key-Secret") String merchantApiKeySecret) {
         log.info("Access Token Request,  merchantApiKeyId : {}, merchantApiKeySecret : {}", merchantApiKeyId, merchantApiKeySecret);
-        return tokenService.generateAccessToken(merchantApiKeyId, merchantApiKeySecret);
+        return tokenService.generateToken(merchantApiKeyId, merchantApiKeySecret);
     }
 
     @PostMapping("/transaction/{orderHash}")

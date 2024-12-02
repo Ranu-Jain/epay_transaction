@@ -1,6 +1,9 @@
 package com.epay.transaction.dto;
 
+import com.epay.transaction.util.enums.OrderStatus;
 import lombok.*;
+
+import java.util.UUID;
 
 /**
  * Class Name: OrderDto
@@ -21,23 +24,17 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class OrderDto extends BaseDto {
-    private String id;
-    private String mid;
-    private String hash;
-    private String merchantCustomerId;
-    private String countryId;
-    private String currencyId;
-    private Double amount;
-    private String orderRefNum;
-    private String sbiOrderRefNum;
-    private String operationMode;
-    private String txnMode;
-    private String paymentMode;
-    private String accessMode;
-    private String orderStatus;
-    private Integer orderRequestCount;
-    private String callbackUrl;
-    private String failedReason;
+    private UUID id;
+    private String mId;
+    private String customerId;
+    private String currencyCode;
+    private Double orderAmount;
+    private String orderRefNumber;
+    private String sbiOrderRefNumber;
+    private OrderStatus status;
     private String otherDetails;
-    private long expiry;
+    private Integer expiry;
+    private String multiAccounts;
+    private String paymentMode;
+    private String orderHash;
 }

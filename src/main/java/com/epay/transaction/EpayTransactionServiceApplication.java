@@ -1,7 +1,6 @@
 package com.epay.transaction;
 
 import com.epay.transaction.config.audit.SpringSecurityAuditorAware;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -31,50 +30,49 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
-@ComponentScan(basePackages = {
-		"org.springframework.boot.context.embedded.tomcat",
-		"com.epay.transaction","com.sbi.epay.authentication"
-})
+@ComponentScan(basePackages = {"org.springframework.boot.context.embedded.tomcat", "com.epay.transaction", "com.sbi.epay.authentication"})
 @EnableJpaRepositories(basePackages = "com.epay.transaction")
 @EntityScan(basePackages = "com.epay.transaction")
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @EnableScheduling
 public class EpayTransactionServiceApplication implements WebMvcConfigurer {
 
-	private static final String CLUSTER_NAME = "Epay_Key_Management";
+    private static final String CLUSTER_NAME = "Epay_Key_Management";
 
-	public static void main(String[] args) {
-		SpringApplication.run(EpayTransactionServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(EpayTransactionServiceApplication.class, args);
+    }
 
-	@Bean
-	public AuditorAware<String> auditorAware() {
-		return new SpringSecurityAuditorAware();
-	}
+    @Bean
+    public AuditorAware<String> auditorAware() {
+        return new SpringSecurityAuditorAware();
+    }
 
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-	}
-	@Bean
-	public HazelcastInstance buidHazelcastInstance() {
-		Config config = new Config();
-		config.setClusterName(CLUSTER_NAME);
-		return Hazelcast.newHazelcastInstance(config);
-	}
-	@Bean
-	public HazelcastService buidHazelcastService() {
-		return new HazelcastService();
-	}
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
 
-	@Bean
-	public EncryptionService buildEncryptionService() {
-		return new EncryptionService();
-	}
+    @Bean
+    public HazelcastInstance buidHazelcastInstance() {
+        Config config = new Config();
+        config.setClusterName(CLUSTER_NAME);
+        return Hazelcast.newHazelcastInstance(config);
+    }
 
-	@Bean
-	public DecryptionService buildDecryptionService() {
-		return new DecryptionService();
-	}
+    @Bean
+    public HazelcastService buidHazelcastService() {
+        return new HazelcastService();
+    }
+
+    @Bean
+    public EncryptionService buildEncryptionService() {
+        return new EncryptionService();
+    }
+
+    @Bean
+    public DecryptionService buildDecryptionService() {
+        return new DecryptionService();
+    }
 }

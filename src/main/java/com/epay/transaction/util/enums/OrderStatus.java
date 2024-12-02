@@ -1,8 +1,5 @@
 package com.epay.transaction.util.enums;
 
-import jakarta.persistence.EnumType;
-
-
 /**
  * enum Name: OrderStatus
  * *
@@ -15,6 +12,5 @@ import jakarta.persistence.EnumType;
  * Version:1.0
  */
 public enum OrderStatus {
-    created,attempted,cancelled,expired,attempt,paid,failed;
-
+    CREATED, ATTEMPTED, CANCELLED, EXPIRED, ATTEMPT, PAID, FAILED
 }

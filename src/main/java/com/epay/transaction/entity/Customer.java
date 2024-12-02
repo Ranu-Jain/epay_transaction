@@ -2,8 +2,8 @@ package com.epay.transaction.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -58,11 +58,10 @@ public class Customer {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    //@Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
     @Column(name = "created_date")
     private Long createdDate;
 
-    ///@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date")
     private Long updatedDate;
 
