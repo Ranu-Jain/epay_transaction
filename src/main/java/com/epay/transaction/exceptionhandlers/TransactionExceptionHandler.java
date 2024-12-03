@@ -16,9 +16,11 @@ import com.epay.transaction.exceptions.TransactionException;
 import com.epay.transaction.exceptions.ValidationException;
 import com.epay.transaction.dto.ErrorDto;
 import com.epay.transaction.model.response.TransactionResponse;
+import com.sbi.epay.encryptdecrypt.exception.EncryptionDecryptionException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,8 +32,9 @@ import java.util.List;
 
 @ControllerAdvice
 public class TransactionExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(TransactionException.class)
-    public ResponseEntity<Object> handleSecurityException(TransactionException ex) {
+    @ExceptionHandler(value = {TransactionException.class, EncryptionDecryptionException.class, AuthenticationException.class})
+    public ResponseEntity<Object> handleTransactionException(TransactionException ex) {
+        logger.error("Error in Transaction Service :", ex);
         ErrorDto errorDto = ErrorDto.builder()
                 .errorCode(ex.getErrorCode())
                 .errorMessage(ex.getErrorMessage())
@@ -39,8 +42,9 @@ public class TransactionExceptionHandler extends ResponseEntityExceptionHandler 
         return generateResponseWithErrors(List.of(errorDto));
     }
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({ValidationException.class})
     public ResponseEntity<Object> handleValidationException(ValidationException ex) {
+        logger.error("Error in Transaction Validation Service : ", ex);
         if(CollectionUtils.isEmpty(ex.getErrorMessages())) {
             ErrorDto errorDto = ErrorDto.builder()
                     .errorCode(ex.getErrorCode())
@@ -53,13 +57,11 @@ public class TransactionExceptionHandler extends ResponseEntityExceptionHandler 
 
     @ExceptionHandler(value = {JwtException.class})
     public ResponseEntity<Object> handleJwtException(JwtException ex, WebRequest request) {
-        String requestUri = ((ServletWebRequest)request).getRequest().getRequestURI();
         logger.error("Error in Authorization ", ex);
         ErrorDto errorDto = ErrorDto.builder()
                 .errorCode(String.valueOf(HttpStatus.UNAUTHORIZED.value()))
                 .errorMessage(ex.getMessage())
                 .build();
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 TransactionResponse.builder()
                         .status(1)
@@ -103,6 +105,5 @@ public class TransactionExceptionHandler extends ResponseEntityExceptionHandler 
                         .errors(errors)
                         .build());
     }
-
 
 }

@@ -42,8 +42,8 @@ public class CustomerDao {
         return merchantDto;
     }
 
-    public Optional<CustomerDto> findCustomerByEmailPhoneAndMerchant(String email, String phone) {
-        Optional<Customer> customer = customerRepository.findByEmailAndPhoneNumber(email, phone);
+    public Optional<CustomerDto> findCustomerByEmailPhoneAndMerchant(String email, String phone, String mid) {
+        Optional<Customer> customer = customerRepository.findByEmailOrPhoneNumberAndMerchantId(email, phone, mid);
         return customer.map(value -> objectMapper.convertValue(value, CustomerDto.class));
     }
 
