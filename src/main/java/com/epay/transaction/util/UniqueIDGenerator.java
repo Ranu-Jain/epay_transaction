@@ -33,6 +33,7 @@ public class UniqueIDGenerator {
 
     private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private final int ALPHABET_LENGTH = ALPHABET.length();
+    private final int NANOS_LENGTH = 15;
     private final int ALPHA_LENGTH = 5;
     private static final AtomicLong lastTime = new AtomicLong(0);
     private final CustomerRepository customerRepository;
@@ -74,7 +75,6 @@ public class UniqueIDGenerator {
 
     private String getRefNumber() {
         Random random = new Random();
-        int NANOS_LENGTH = 15;
         String nanosString = String.format("%015d", getUniqueTime()).substring(0, NANOS_LENGTH);
         return IntStream.range(0, ALPHA_LENGTH).mapToObj(i -> String.valueOf(ALPHABET.charAt(random.nextInt(ALPHABET_LENGTH)))).collect(Collectors.joining("", nanosString, ""));
     }

@@ -37,7 +37,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 public class EpayTransactionServiceApplication implements WebMvcConfigurer {
 
-    private static final String CLUSTER_NAME = "Epay_Key_Management";
+    private static final String CLUSTER_NAME = "Epay_Transaction_service";
 
     public static void main(String[] args) {
         SpringApplication.run(EpayTransactionServiceApplication.class, args);
@@ -54,6 +54,7 @@ public class EpayTransactionServiceApplication implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
+    //TODO: This is temporary  provision of hazelcast configuration. Once dev-cluster is ready, cluster name will be set accordingly.
     @Bean
     public HazelcastInstance buidHazelcastInstance() {
         Config config = new Config();

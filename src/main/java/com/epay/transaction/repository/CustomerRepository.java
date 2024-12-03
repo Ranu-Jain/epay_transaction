@@ -18,10 +18,8 @@ import java.util.UUID;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 
-    Optional<Customer> findByEmailOrPhoneNumberAndMerchantId(String email, String phone, String mId);
-
+    Optional<Customer> findByEmailAndPhoneNumber(String email, String phone);
     Optional<Customer> findByCustomerId(String customerId);
-
     boolean existsByCustomerId(String customerId);
 
 }
