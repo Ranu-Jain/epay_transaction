@@ -3,7 +3,6 @@ package com.epay.transaction.externalservice;
 
 import com.epay.transaction.client.ApiClient;
 import com.epay.transaction.dto.MerchantDto;
-import com.epay.transaction.service.TokenService;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
 import com.sbi.epay.logging.utility.LoggerUtility;
 import org.springframework.http.HttpEntity;
@@ -12,7 +11,7 @@ import org.springframework.http.HttpHeaders;
 import java.net.URI;
 
 public class MerchantServicesClient extends ApiClient {
-    private static final LoggerUtility log = LoggerFactoryUtility.getLogger(TokenService.class);
+    private static final LoggerUtility log = LoggerFactoryUtility.getLogger(MerchantServicesClient.class);
 
     public static final String MERCHANT_ENDPOINT = "/";
 

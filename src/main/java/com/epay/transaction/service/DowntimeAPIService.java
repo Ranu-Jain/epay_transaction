@@ -1,13 +1,16 @@
 package com.epay.transaction.service;
 
-import com.epay.transaction.dao.TransDownApiDao;
+import com.epay.transaction.dao.DowntimeAPIDao;
+import com.epay.transaction.dto.DowntimeAPIDto;
 import com.epay.transaction.model.response.TransactionResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
- * Class Name: TransDownApiService
+ * Class Name: DowntimeAPIService
  * *
  * Description: This class contains details of transaction downtime api details.
  * *
@@ -20,9 +23,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class TransDownApiService {
-    private final TransDownApiDao transDownApiDao;
-    private final String status ="L";
+public class DowntimeAPIService {
+    private final DowntimeAPIDao downtimeAPIDao;
 
     /**
      * This methods contains transaction downtime api details.
@@ -30,8 +32,10 @@ public class TransDownApiService {
      * @return list of transaction downtime api details.
      */
 
-    public TransactionResponse<Object> getDowntimeApiDetails() {
-        return transDownApiDao.getDowntimeApiDetails(status);
+    public TransactionResponse<DowntimeAPIDto> getDowntimeAPIs() {
+        String status = "L";
+        List<DowntimeAPIDto> downtimeApiDetails = downtimeAPIDao.getDowntimeAPIs(status);
+        return TransactionResponse.<DowntimeAPIDto>builder().data(downtimeApiDetails).status(1).count(1L).build();
     }
 
 }

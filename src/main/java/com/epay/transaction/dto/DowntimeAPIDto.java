@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Class Name: TransDownApiDto
+ * Class Name: DowntimeAPIDto
  * *
  * Description: This response class contains details related to transaction- downtime api records(s).
  * *
@@ -19,7 +19,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TransDownApiDto {
+public class DowntimeAPIDto {
     private String payGtwId;
     private String payGtwName;
     private String payModeCode;
