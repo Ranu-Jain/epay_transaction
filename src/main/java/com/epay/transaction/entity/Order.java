@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -26,14 +27,19 @@ public class Order {
     @Column(name = "merchant_id")
     private String mId;
 
+    @Column(name = "customer_id")
     private String customerId;
 
+    @Column(name = "currency_code")
     private String currencyCode;
 
-    private Double orderAmount;
+    @Column(name = "order_amount")
+    private BigDecimal orderAmount;
 
+    @Column(name = "order_ref_number")
     private String orderRefNumber;
 
+    @Column(name = "sbi_order_ref_number")
     private String sbiOrderRefNumber;
 
     @Enumerated(EnumType.STRING)
@@ -46,8 +52,10 @@ public class Order {
     @Column(name = "multi_accounts", columnDefinition = "CLOB")
     private String multiAccounts;
 
+    @Column(name = "payment_mode")
     private String paymentMode;
 
+    @Column(name = "order_hash")
     private String orderHash;
 
     @Column(name = "created_by")

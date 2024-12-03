@@ -22,7 +22,7 @@ repositories {
     }
     //mavenLocal()
     flatDir {
-        dirs "lib"
+        dirs "libs"
     }
 }
 
@@ -44,7 +44,6 @@ dependencies {
 
     //Utility
     implementation 'name:authentication-service-0.0.1-SNAPSHOT'
-    // implementation 'name:encryption-decryption-service-1.0-SNAPSHOT-plain'
     implementation 'name:logging-service-1.0-SNAPSHOT'
     implementation 'name:hazelcast-service-0.0.1-SNAPSHOT-plain'
     implementation 'name:encryption-decryption-service-0.0.1-SNAPSHOT'

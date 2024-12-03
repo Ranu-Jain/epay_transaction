@@ -25,48 +25,36 @@ CREATE TABLE token_audit (
     action_type VARCHAR2(50 CHAR) NOT NULL
 );
 
-CREATE TABLE merchant_order_info(
+CREATE TABLE order(
     id RAW(16) DEFAULT SYS_GUID() PRIMARY KEY NOT NULL,
-    status VARCHAR2(50 CHAR),
-    order_hash VARCHAR2(50 CHAR),
-    merchant_token_id RAW(16),
     merchant_id VARCHAR2(50 CHAR),
-    merchant_customer_id RAW(16),
-    country_id VARCHAR2(50 CHAR),
-    currency_id VARCHAR2(50 CHAR),
-    amount NUMBER,
-    order_ref_num VARCHAR2(255 CHAR),
-    sbi_order_ref_num VARCHAR2(255 CHAR),
-    operation_mode VARCHAR2(50 CHAR),
-    txn_mode VARCHAR2(50 CHAR),
-    payment_mode VARCHAR2(50 CHAR),
-    access_mode VARCHAR2(50 CHAR),
-    order_status VARCHAR2(50 CHAR),
-    order_request_count NUMBER,
-    callback_url VARCHAR2(255 CHAR),
-    failed_reason VARCHAR2(255 CHAR),
-    system_ip VARCHAR2(255 CHAR),
-    geo_location VARCHAR2(255 CHAR),
-    system_details VARCHAR2(50 CHAR),
-    order_generation_mode VARCHAR2(50 CHAR),
+    customer_id VARCHAR2(50 CHAR),
+    currency_code VARCHAR2(50 CHAR),
+    order_amount NUMBER,
+    order_ref_number VARCHAR2(255 CHAR),
+    sbi_order_ref_number VARCHAR2(255 CHAR),
+    status VARCHAR2(50 CHAR),
     other_details CLOB,
     expiry NUMBER,
-    tpv CLOB,
-    token VARCHAR2(2000 CHAR)
+    multi_accounts CLOB,
+    payment_mode VARCHAR2(50 CHAR),
+    order_hash VARCHAR2(50 CHAR),
+    created_by VARCHAR2(50 CHAR),
+    updated_by VARCHAR2(50 CHAR),
+    created_date NUMBER,
+    updated_date NUMBER
 );
 
+CREATE INDEX idx_merchant_id ON order (merchant_id);
 
-CREATE INDEX idx_merchant_id ON merchant_order_info (merchant_id);
-
-
-INSERT INTO merchant_order_info (
+INSERT INTO order (
     status,
     order_hash,
     merchant_id,
-    sbi_order_ref_num,
+    sbi_order_ref_number,
     expiry
 ) VALUES (
-    'ACTIVE',
+    'CREATED',
     'ff382163eaaa135afd90735',
     '1122323',
     'sbiorder1234',
