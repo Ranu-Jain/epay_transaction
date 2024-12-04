@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class MerchantDto {
     private String mID;
-  //  private Long accessTokenExpiryTime;
+    //private Long accessTokenExpiryTime;
    // private Long transactionTokenExpiryTime;
     private Integer accessTokenExpiryTime;
     private Integer transactionTokenExpiryTime;

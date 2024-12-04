@@ -25,7 +25,7 @@ CREATE TABLE token_audit (
     action_type VARCHAR2(50 CHAR) NOT NULL
 );
 
-CREATE TABLE order(
+CREATE TABLE orders(
     id RAW(16) DEFAULT SYS_GUID() PRIMARY KEY NOT NULL,
     merchant_id VARCHAR2(50 CHAR),
     customer_id VARCHAR2(50 CHAR),

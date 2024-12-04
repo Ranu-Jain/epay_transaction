@@ -16,10 +16,8 @@ import com.epay.transaction.dto.TokenDto;
 import com.epay.transaction.entity.Order;
 import com.epay.transaction.entity.Token;
 import com.epay.transaction.exceptions.TransactionException;
-import com.epay.transaction.externalservice.MerchantServicesClient;
 import com.epay.transaction.repository.OrderRepository;
 import com.epay.transaction.repository.TokenRepository;
-import com.epay.transaction.repository.cache.MerchantCacheRepo;
 import com.epay.transaction.service.TokenService;
 import com.epay.transaction.util.ErrorConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,20 +34,13 @@ import java.util.Optional;
 public class TokenDao {
 
     private static final LoggerUtility log = LoggerFactoryUtility.getLogger(TokenService.class);
-    private final MerchantCacheRepo merchantCacheRepository;
     private final OrderRepository orderRepository;
     private final TokenRepository tokenRepository;
+    private final MerchantDao merchantDao;
     private final ObjectMapper objectMapper;
-    private final MerchantServicesClient merchantServicesClient;
 
-    public Optional<MerchantDto> getActiveMerchantByKeys(String merchantApiKey, String merchantSecretKey) {
-        log.info(" getActiveMerchantByKeys starts");
-        Optional<MerchantDto> merchantDto = merchantCacheRepository.getActiveMerchantByKeys(merchantApiKey, merchantSecretKey);
-        if (merchantDto.isEmpty()) {
-            merchantDto = Optional.ofNullable(merchantServicesClient.getMerchantInfo(merchantApiKey, merchantSecretKey));
-        }
-        log.info(" getActiveMerchantByKeys ends");
-        return merchantDto;
+    public MerchantDto getActiveMerchantByKeys(String merchantApiKey, String merchantSecretKey) {
+        return merchantDao.getActiveMerchantByKeys(merchantApiKey, merchantSecretKey);
     }
 
     public OrderDto getActiveTransactionByHashValue(String orderHash) {
@@ -67,20 +58,13 @@ public class TokenDao {
         return objectMapper.convertValue(token, TokenDto.class);
     }
 
-    public Optional<MerchantDto> getActiveMerchantByMID(String mid) {
-        log.info(" request for active merchantId from merchant cache ");
-        Optional<MerchantDto> merchantDto = merchantCacheRepository.getActiveMerchantByMID(mid);
-        if (merchantDto.isEmpty()) {
-            log.info(" request for active merchantId from merchant API service ");
-            merchantDto = Optional.ofNullable(merchantServicesClient.getActiveMerchantByMID(mid));
-            log.info(" getting active merchantId from merchant API service ");
-        }
-        return merchantDto;
+    public MerchantDto getActiveMerchantByMID(String mid) {
+        return merchantDao.getActiveMerchantByMID(mid);
     }
 
-    public Optional<TokenDto> getActiveTokenByMID(String mID) {
+    public Optional<TokenDto> getActiveTokenByMID(String mID, String tokenToInvalidate) {
         log.info(" request for Active Token using MID ");
-        Token token = tokenRepository.findActiveTokenByMerchantId(mID);
+        Token token = tokenRepository.findActiveTokenByMerchantId(mID, tokenToInvalidate);
         log.info(" getting for Active Token using MID ");
         return Optional.ofNullable(objectMapper.convertValue(token, TokenDto.class));
     }

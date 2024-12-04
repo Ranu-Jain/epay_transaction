@@ -23,12 +23,8 @@ import java.util.UUID;
 @Repository
 public interface TokenRepository extends JpaRepository<Token, UUID> {
 
-    @Query("SELECT t FROM Token t WHERE t.merchantId =:mid AND t.status = 'ACTIVE'")
-    Token findActiveTokenByMerchantId(@Param("mid") String mid);
-
-    @Query("SELECT t FROM Token t WHERE t.generatedToken =:generatedToken AND t.status = 'ACTIVE'")
-    Token findActiveTokenByGeneratedToken(@Param("generatedToken") String generatedToken);
-
+    @Query("SELECT t FROM Token t WHERE t.merchantId =:mid AND t.generatedToken =:generatedToken AND t.status = 'ACTIVE'")
+    Token findActiveTokenByMerchantId(@Param("mid") String mid, @Param("generatedToken") String generatedToken);
     List<Token> findByStatusAndTokenExpiryTimeLessThan(String active, Long currentTimeStamp);
 
 }

@@ -33,6 +33,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class OrderDao {
+
     private final MerchantCacheRepo merchantCacheRepository;
     private final MerchantServicesClient merchantServicesClient;
     private final ObjectMapper objectMapper;
@@ -61,7 +62,17 @@ public class OrderDao {
     }
 
     public OrderDto getOrderByOrderRefNumber(String orderRefNumber) {
-        Optional<Order> order = orderRepository.findByOrderRefNumber(orderRefNumber);
+        Order order = orderRepository.findByOrderRefNumber(orderRefNumber).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Order")));
+        return objectMapper.convertValue(order, OrderDto.class);
+    }
+
+    public OrderDto getValidOrderBySBIOrderRefNumber(String orderRefNumber) {
+        Order order = orderRepository.findActiveOrderBySBIOrderRefNumber(orderRefNumber).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Order")));
+        return objectMapper.convertValue(order, OrderDto.class);
+    }
+
+    public OrderDto getValidOrderByOrderHash(String orderHash) {
+        Order order = orderRepository.findActiveOrderByHash(orderHash).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Order")));
         return objectMapper.convertValue(order, OrderDto.class);
     }
 

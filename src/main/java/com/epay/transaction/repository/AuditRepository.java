@@ -18,6 +18,9 @@ import java.util.UUID;
  * *
  * Version:1.0
  */
-@Repository
-public interface AuditRepository extends JpaRepository<TokenAudit, UUID> {
+    @Repository
+    public interface AuditRepository extends JpaRepository<TokenAudit, UUID> {
+
+
+
 }
