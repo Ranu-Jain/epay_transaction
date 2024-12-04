@@ -24,6 +24,7 @@ import com.epay.transaction.util.EPayIdentityUtil;
 import com.epay.transaction.util.EncryptionDecryptionUtil;
 import com.epay.transaction.util.ErrorConstants;
 import com.epay.transaction.util.UniqueIDGenerator;
+import com.epay.transaction.util.enums.Status;
 import com.epay.transaction.validator.CustomerValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +53,7 @@ public class CustomerService {
         EPayPrincipal ePayPrincipal = EPayIdentityUtil.getUserPrincipal();
         //Step 1 : Get Merchant for finding the Keys
         logger.info("get Merchant Id");
-        MerchantDto merchantDto = customerDao.getActiveMerchantByMID(ePayPrincipal.getMid()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
+        MerchantDto merchantDto = customerDao.getActiveMerchantByMID(ePayPrincipal.getMid());
         //Step 2 : Decrypt the customerRequest
         CustomerDto customerDto = buildCustomerDTO(customerRequest.getCustomerRequest(), merchantDto);
         //Step 3 : Validated customerRequest
@@ -70,7 +71,27 @@ public class CustomerService {
 
     public TransactionResponse<CustomerResponse> getCustomerByCustomerId(String customerId) {
         CustomerDto customerDto = customerDao.getCustomerByCustomerId(customerId).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Customer")));
-        MerchantDto merchantDto = customerDao.getActiveMerchantByMID(customerDto.getMId()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
+        MerchantDto merchantDto = customerDao.getActiveMerchantByMID(customerDto.getMId());
+        String customerData = buildCustomerData(customerDto, merchantDto);
+        CustomerResponse customerResponse = CustomerResponse.builder().customerId(customerDto.getCustomerId()).customerResponse(customerData).build();
+        return TransactionResponse.<CustomerResponse>builder().data(List.of(customerResponse)).status(1).count(1L).build();
+    }
+
+    /**
+     * Service method to update customer status
+     * @param customerId
+     * @param status
+     * @return CustomerResponse
+     */
+    public TransactionResponse<CustomerResponse> updateCustomerStatus(String customerId, String status) {
+        //Step 1 : Get Customer by mid
+        CustomerDto customerDto = customerDao.getCustomerByCustomerId(customerId).orElseThrow(() ->
+                new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Customer")));//Step 2 : Decrypt the customerRequest
+        MerchantDto merchantDto = customerDao.getActiveMerchantByMID(customerDto.getMId());
+        //Status validation and set the status to customer DTO
+        customerDto.setStatus(Status.getStatus(status).name());
+        //Call DAO method
+        customerDao.updateCustomerStatus(customerDto);
         String customerData = buildCustomerData(customerDto, merchantDto);
         CustomerResponse customerResponse = CustomerResponse.builder().customerId(customerDto.getCustomerId()).customerResponse(customerData).build();
         return TransactionResponse.<CustomerResponse>builder().data(List.of(customerResponse)).status(1).count(1L).build();
@@ -82,7 +103,7 @@ public class CustomerService {
             return objectMapper.readValue(decryptedCustomerRequest, CustomerDto.class);
         } catch (JsonProcessingException e) {
             logger.error("Error in buildCustomerDTO  ", e);
-            throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, customerRequest));
+            throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, customerRequest, "Request is not proper"));
         }
     }
 
@@ -91,7 +112,7 @@ public class CustomerService {
             return encryptionDecryptionUtil.encryptRequest(objectMapper.writeValueAsString(customerDto), merchantDto);
         } catch (JsonProcessingException e) {
             logger.error("Error in buildCustomerData  ", e);
-            throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, customerDto));
+            throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, customerDto, "Request is not proper"));
         }
     }
 }

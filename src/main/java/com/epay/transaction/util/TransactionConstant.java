@@ -1,5 +1,17 @@
 package com.epay.transaction.util;
 
+/**
+ * Class Name:TransactionConstant
+ * *
+ * Description:
+ * *
+ * Author:V1014352(Ranjan Kumar)
+ * <p>
+ * Copyright (c) 2024 [State Bank of INdia]
+ * All right reserved
+ * *
+ * Version:1.0
+ */
 public class TransactionConstant {
 
     public static final int NAME_LENGTH = 100;

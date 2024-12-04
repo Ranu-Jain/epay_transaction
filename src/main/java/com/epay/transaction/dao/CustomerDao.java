@@ -3,9 +3,7 @@ package com.epay.transaction.dao;
 import com.epay.transaction.dto.CustomerDto;
 import com.epay.transaction.dto.MerchantDto;
 import com.epay.transaction.entity.Customer;
-import com.epay.transaction.externalservice.MerchantServicesClient;
 import com.epay.transaction.repository.CustomerRepository;
-import com.epay.transaction.repository.cache.MerchantCacheRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,16 +28,11 @@ import java.util.Optional;
 public class CustomerDao {
 
     private final CustomerRepository customerRepository;
-    private final MerchantCacheRepo merchantCacheRepository;
+    private final MerchantDao merchantDao;
     private final ObjectMapper objectMapper;
-    private final MerchantServicesClient merchantServicesClient;
 
-    public Optional<MerchantDto> getActiveMerchantByMID(String mID) {
-        Optional<MerchantDto> merchantDto = merchantCacheRepository.getActiveMerchantByMID(mID);
-        if (merchantDto.isEmpty()) {
-            merchantDto = Optional.ofNullable(merchantServicesClient.getMerchantByMID(mID));
-        }
-        return merchantDto;
+    public MerchantDto getActiveMerchantByMID(String mID) {
+        return merchantDao.getActiveMerchantByMID(mID);
     }
 
     public Optional<CustomerDto> findCustomerByEmailPhoneAndMerchant(String email, String phone, String mid) {
@@ -56,5 +49,17 @@ public class CustomerDao {
     public Optional<CustomerDto> getCustomerByCustomerId(String customerId) {
         Optional<Customer> customer = customerRepository.findByCustomerId(customerId);
         return customer.map(value -> objectMapper.convertValue(value, CustomerDto.class));
+    }
+
+    /**
+     * Update customer status
+     *
+     * @param customerDto
+     * @return CustomerDto
+     */
+    public CustomerDto updateCustomerStatus(CustomerDto customerDto) {
+        Customer customer = objectMapper.convertValue(customerDto, Customer.class);
+        customerRepository.save(customer);
+        return objectMapper.convertValue(customer, CustomerDto.class);
     }
 }

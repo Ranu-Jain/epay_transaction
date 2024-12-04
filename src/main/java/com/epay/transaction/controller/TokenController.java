@@ -39,6 +39,13 @@ public class TokenController {
         return tokenService.generateTransactionToken(orderHash);
     }
 
+    @PostMapping("/payment/{orderHash}")
+    @Operation(summary = "Transaction Token Generation")
+    public TransactionResponse<String> generatePaymentToken(@PathVariable("orderHash") String orderHash) {
+        log.info("Transaction Token Request,  orderHash : {}", orderHash);
+        return tokenService.generatePaymentToken(orderHash);
+    }
+
     @PostMapping("/invalidate")
     @Operation(summary = "Transaction Invalidation")
     public TransactionResponse<String> invalidateToken() {

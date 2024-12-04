@@ -1,17 +1,22 @@
 package com.epay.transaction.validator;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /*
-* Copyright (c) [2024] [State Bank of India]
-* All rights reserved.
-*
-* @author Shilpa Kothre
-*/
+ * Copyright (c) [2024] [State Bank of India]
+ * All rights reserved.
+ *
+ * @author Shilpa Kothre
+ */
 @Component
-public class TokenValidator {
-  /*  boolean validateMerchant(MerchantInfo merchantInfo) {
+@RequiredArgsConstructor
+public class TokenValidator extends BaseValidator {
 
-        return false;
-    }*/
+    public void validateAccessTokenRequest(String merchantApiKeyId, String merchantApiKeySecret) {
+        checkMandatoryField("Merchant Api Key Id", merchantApiKeyId);
+        checkMandatoryField("Merchant Api Key Secret", merchantApiKeySecret);
+        throwIfErrors();
+    }
+
 }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,10 +32,9 @@ import java.util.stream.IntStream;
 @Component
 public class UniqueIDGenerator {
 
+    private static final AtomicLong lastTime = new AtomicLong(0);
     private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private final int ALPHABET_LENGTH = ALPHABET.length();
-    private final int ALPHA_LENGTH = 5;
-    private static final AtomicLong lastTime = new AtomicLong(0);
     private final CustomerRepository customerRepository;
     private final OrderRepository orderRepository;
     LoggerUtility logger = LoggerFactoryUtility.getLogger(UniqueIDGenerator.class);
@@ -72,10 +72,29 @@ public class UniqueIDGenerator {
         return sbiOrderRefNumber;
     }
 
+    public String generateATRNNumber() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder atrnNumber = new StringBuilder();
+
+        while (atrnNumber.length() < 14) {
+            int rand = random.nextInt(36); // Generate a random number between 0-35
+            char ch = (rand < 10) ? (char) ('0' + rand) : (char) ('a' + rand - 10);
+            atrnNumber.append(ch);
+        }
+
+        // Ensure the first character is not '0'
+        if (atrnNumber.charAt(0) == '0') {
+            atrnNumber.setCharAt(0, (char) (random.nextInt(9) + '1'));
+        }
+
+        return atrnNumber.toString();
+    }
+
     private String getRefNumber() {
         Random random = new Random();
         int NANOS_LENGTH = 15;
         String nanosString = String.format("%015d", getUniqueTime()).substring(0, NANOS_LENGTH);
+        int ALPHA_LENGTH = 5;
         return IntStream.range(0, ALPHA_LENGTH).mapToObj(i -> String.valueOf(ALPHABET.charAt(random.nextInt(ALPHABET_LENGTH)))).collect(Collectors.joining("", nanosString, ""));
     }
 

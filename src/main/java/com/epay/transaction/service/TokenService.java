@@ -18,10 +18,8 @@ import com.epay.transaction.model.response.TransactionResponse;
 import com.epay.transaction.util.EPayIdentityUtil;
 import com.epay.transaction.util.ErrorConstants;
 import com.epay.transaction.util.enums.TokenStatus;
-import com.sbi.epay.authentication.model.AccessTokenRequest;
-import com.sbi.epay.authentication.model.EPayPrincipal;
-import com.sbi.epay.authentication.model.TokenRequest;
-import com.sbi.epay.authentication.model.TransactionTokenRequest;
+import com.epay.transaction.validator.TokenValidator;
+import com.sbi.epay.authentication.model.*;
 import com.sbi.epay.authentication.service.AuthenticationService;
 import com.sbi.epay.authentication.util.enums.TokenType;
 import com.sbi.epay.logging.utility.LoggerFactoryUtility;
@@ -31,6 +29,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +40,7 @@ public class TokenService {
     private static final LoggerUtility log = LoggerFactoryUtility.getLogger(TokenService.class);
     private final TokenDao tokenDao;
     private final AuthenticationService authService;
+    private final TokenValidator tokenValidator;
 
     private static TransactionTokenRequest buildTransactionTokenRequest(OrderDto orderDto, MerchantDto merchantDto) {
         TransactionTokenRequest transactionTokenRequest = new TransactionTokenRequest();
@@ -52,31 +52,55 @@ public class TokenService {
         return transactionTokenRequest;
     }
 
+    private static PaymentTokenRequest buildPaymentTokenRequest(OrderDto orderDto, MerchantDto merchantDto) {
+        PaymentTokenRequest paymentTokenRequest = new PaymentTokenRequest();
+        paymentTokenRequest.setTokenType(TokenType.PAYMENT);
+        paymentTokenRequest.setMid(orderDto.getMId());
+        paymentTokenRequest.setSbiOrderReferenceNumber(orderDto.getSbiOrderRefNumber());
+        paymentTokenRequest.setExpirationTime(merchantDto.getTransactionTokenExpiryTime());
+        return paymentTokenRequest;
+    }
+
     public TransactionResponse<String> generateToken(String merchantApiKeyId, String merchantApiKeySecret) {
-        log.info("Access Token Request for merchantApiKey {0} merchantApiKeySecret {1}", merchantApiKeyId, merchantApiKeySecret);
+
+        log.debug("Access Token Request for merchantApiKey {0} merchantApiKeySecret {1}", merchantApiKeyId, merchantApiKeySecret);
+        //Validate request header params
+        tokenValidator.validateAccessTokenRequest(merchantApiKeyId, merchantApiKeySecret);
         //Step 1 : Get Merchant Object
-        MerchantDto merchantDto = tokenDao.getActiveMerchantByKeys(merchantApiKeyId, merchantApiKeySecret).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
+        MerchantDto merchantDto = tokenDao.getActiveMerchantByKeys(merchantApiKeyId, merchantApiKeySecret);
         //Step 2 : Token Generation
-        log.info(" generating Access token ");
+        log.debug(" generating Access token ");
         return generateToken(buildAccessTokenRequest(merchantDto));
     }
 
     public TransactionResponse<String> generateTransactionToken(String orderHash) {
-        log.info(" Transaction Token Request for orderHash {0} ", orderHash);
+        log.debug(" Transaction Token Request for orderHash {0} ", orderHash);
         //Step 1 : Get Order Object
         OrderDto orderDto = tokenDao.getActiveTransactionByHashValue(orderHash);
         //Step 2 : Get Merchant Object
         log.info(" request for merchant Info ");
-        MerchantDto merchantDto = tokenDao.getActiveMerchantByMID(orderDto.getMId()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Valid Merchant")));
+        MerchantDto merchantDto = tokenDao.getActiveMerchantByMID(orderDto.getMId());
         //Step 3 : Token Generation
         log.info(" generating transaction token ");
         return generateToken(buildTransactionTokenRequest(orderDto, merchantDto));
     }
 
+    public TransactionResponse<String> generatePaymentToken(String orderHash) {
+        log.info(" Transaction Token Request for orderHash {0} ", orderHash);
+        //Step 1 : Get Order Object
+        OrderDto orderDto = tokenDao.getActiveTransactionByHashValue(orderHash);
+        //Step 2 : Get Merchant Object
+        log.info(" request for merchant Info ");
+        MerchantDto merchantDto = tokenDao.getActiveMerchantByMID(orderDto.getMId());
+        //Step 3 : Token Generation
+        log.info(" generating transaction token ");
+        return generateToken(buildPaymentTokenRequest(orderDto, merchantDto));
+    }
+
     public TransactionResponse<String> invalidateToken() {
         log.info(" Invalidate Token - Service");
         EPayPrincipal ePayPrincipal = EPayIdentityUtil.getUserPrincipal();
-        TokenDto tokenDto = tokenDao.getActiveTokenByMID(ePayPrincipal.getMid()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Active Token")));
+        TokenDto tokenDto = tokenDao.getActiveTokenByMID(ePayPrincipal.getMid(), ePayPrincipal.getToken()).orElseThrow(() -> new TransactionException(ErrorConstants.NOT_FOUND_ERROR_CODE, MessageFormat.format(ErrorConstants.NOT_FOUND_ERROR_MESSAGE, "Active Token")));
         tokenDto.setTokenValid(false);
         tokenDto.setExpiredAt(System.currentTimeMillis());
         tokenDto.setStatus(TokenStatus.INACTIVE.name());
@@ -127,8 +151,9 @@ public class TokenService {
         return switch (tokenRequest.getTokenType()) {
             case ACCESS -> authService.generateAccessToken((AccessTokenRequest) tokenRequest);
             case TRANSACTION -> authService.generateTransactionToken((TransactionTokenRequest) tokenRequest);
+            case PAYMENT -> authService.generatePaymentToken((PaymentTokenRequest) tokenRequest);
             default ->
-                    throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, "Token Type"));
+                    throw new TransactionException(ErrorConstants.INVALID_ERROR_CODE, MessageFormat.format(ErrorConstants.INVALID_ERROR_MESSAGE, "Token Type", "Valid Token Types are " + Arrays.toString(TokenType.values())));
         };
     }
 

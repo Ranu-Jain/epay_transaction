@@ -11,6 +11,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Class Name:BaseValidator
+ * *
+ * Description:
+ * *
+ * Author:V1014352(Ranjan Kumar)
+ * <p>
+ * Copyright (c) 2024 [State Bank of INdia]
+ * All right reserved
+ * *
+ * Version:1.0
+ */
 public class BaseValidator {
 
     List<ErrorDto> errorDtoList = new ArrayList<>();
@@ -20,9 +32,10 @@ public class BaseValidator {
             addError(fieldName, ErrorConstants.MANDATORY_FOUND_ERROR_CODE, ErrorConstants.MANDATORY_ERROR_MESSAGE);
         }
     }
+
     void checkMandatoryFields(String fieldName, String... values) {
         boolean allEmpty = Arrays.stream(values).allMatch(StringUtils::isEmpty);
-        if (allEmpty){
+        if (allEmpty) {
             addError(fieldName, ErrorConstants.MANDATORY_FOUND_ERROR_CODE, ErrorConstants.MANDATORY_ERROR_MESSAGE);
         }
     }
@@ -58,5 +71,4 @@ public class BaseValidator {
     boolean validate(String value, String regex) {
         return !Pattern.matches(regex, value);
     }
-
 }

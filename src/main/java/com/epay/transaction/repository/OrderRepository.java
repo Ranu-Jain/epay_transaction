@@ -24,8 +24,12 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    @Query("SELECT t FROM Order t WHERE t.orderHash =:orderHash AND t.status IN ('ACTIVE', 'BOOKED')")
+   // TODO: To find active order, temporary using status for now, we will use order expiry later.(Change require in Authentication Utility)
+    @Query("SELECT t FROM Order t WHERE t.orderHash =:orderHash AND t.status IN ('CREATED', 'ATTEMPTED')")
     Optional<Order> findActiveOrderByHash(@Param("orderHash") String orderHash);
+
+    @Query("SELECT t FROM Order t WHERE t.sbiOrderRefNumber =:sbiOrderRefNumber AND t.status IN ('CREATED', 'ATTEMPTED')")
+    Optional<Order> findActiveOrderBySBIOrderRefNumber(@Param("sbiOrderRefNumber") String sbiOrderRefNumber);
 
     Optional<Order> findByOrderRefNumber(String id);
 
