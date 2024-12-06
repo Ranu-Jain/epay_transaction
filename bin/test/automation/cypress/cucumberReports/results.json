@@ -1,0 +1,50 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "verify-the-title-of-the-page;visit-the-homepage-and-check-the-title",
+        "keyword": "Scenario",
+        "line": 3,
+        "name": "Visit the homepage and check the title",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I open the homepage",
+            "match": {
+              "location": "not available:0"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1724000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 5,
+            "name": "the page title should be \"Electrolite\"",
+            "match": {
+              "location": "not available:0"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 156000000
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "verify-the-title-of-the-page",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Verify the title of the page",
+    "tags": [],
+    "uri": "cypress/e2e/features/token.feature"
+  }
+]

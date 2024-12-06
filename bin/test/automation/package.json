@@ -1,0 +1,36 @@
+{
+  "name": "epay_transaction",
+  "version": "1.0.0",
+  "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ranu-Jain/epay_transaction.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ranu-Jain/epay_transaction/issues"
+  },
+  "cypress-cucumber-preprocessor": {
+    "json": {
+      "enabled": true,
+      "output": "cypress/cucumberReports/results.json"
+    }
+  },
+  "homepage": "https://github.com/Ranu-Jain/epay_transaction#readme",
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@badeball/cypress-cucumber-preprocessor": "^21.0.3",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.3",
+    "@cypress/webpack-preprocessor": "^6.0.2",
+    "cypress": "^13.16.0",
+    "esbuild": "^0.24.0",
+    "multiple-cucumber-html-reporter": "^3.8.0"
+  }
+}
